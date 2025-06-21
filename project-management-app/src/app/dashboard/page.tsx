@@ -76,6 +76,7 @@ export default function DashboardPage() {
   const [projects, setProjects] = useState<Project[]>([])
   const [loading, setLoading] = useState(true)
   const [hoveredPriority, setHoveredPriority] = useState<string | null>(null)
+  const [clickedPriority, setClickedPriority] = useState<string | null>(null)
   const [matrixProjects, setMatrixProjects] = useState<Project[]>([])
   const [statsFilter, setStatsFilter] = useState<'ALL' | 'DONE' | 'ONGOING'>('ALL')
   const [strategicFilter, setStrategicFilter] = useState<'COMPLETED' | 'ACTIVE'>('ACTIVE')
@@ -114,6 +115,24 @@ export default function DashboardPage() {
   useEffect(() => {
     fetchProjects()
   }, [])
+
+  // Handle clicks outside the popup to close sticky popups
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as HTMLElement
+      // Check if click is outside the popup and card
+      if (clickedPriority && 
+          !target.closest('.priority-popup') && 
+          !target.closest('.priority-card')) {
+        setClickedPriority(null)
+      }
+    }
+
+    if (clickedPriority) {
+      document.addEventListener('mousedown', handleClickOutside)
+      return () => document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [clickedPriority])
 
   const fetchProjects = async () => {
     try {
@@ -649,12 +668,33 @@ export default function DashboardPage() {
               <div className="space-y-4 max-h-80 overflow-y-auto relative">
                 {(['Quick Wins', 'Major Projects', 'Fill-ins', 'Thankless Tasks'] as const).map((quadrant, quadrantIndex) => {
                   const projectList = matrixQuadrants[quadrant]
+                  const isPopupVisible = hoveredPriority === quadrant || clickedPriority === quadrant
+                  
                   return projectList.length > 0 && (
                     <div
                       key={quadrant}
-                      className={`relative p-4 rounded-lg border-2 cursor-pointer transition-all duration-200 ${getQuadrantColor(quadrant)} hover:shadow-lg`}
-                      onMouseEnter={() => setHoveredPriority(quadrant)}
-                      onMouseLeave={() => setHoveredPriority(null)}
+                      className={`priority-card relative p-4 rounded-lg border-2 cursor-pointer transition-all duration-200 ${getQuadrantColor(quadrant)} hover:shadow-lg ${clickedPriority === quadrant ? 'ring-2 ring-blue-500 ring-opacity-50' : ''}`}
+                      onMouseEnter={() => {
+                        // Only show hover if not clicked/sticky
+                        if (!clickedPriority) {
+                          setHoveredPriority(quadrant)
+                        }
+                      }}
+                      onMouseLeave={() => {
+                        // Only hide hover if not clicked/sticky
+                        if (!clickedPriority) {
+                          setHoveredPriority(null)
+                        }
+                      }}
+                      onClick={() => {
+                        // Toggle clicked state
+                        if (clickedPriority === quadrant) {
+                          setClickedPriority(null)
+                        } else {
+                          setClickedPriority(quadrant)
+                          setHoveredPriority(null) // Clear hover when clicking
+                        }
+                      }}
                     >
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
@@ -663,16 +703,23 @@ export default function DashboardPage() {
                             {quadrant}: {projectList.length} Project{projectList.length > 1 ? 's' : ''}
                           </span>
                         </div>
-                        <Badge variant="outline" className="bg-white">
-                          {projectList.length}
-                        </Badge>
+                        <div className="flex items-center gap-2">
+                          <Badge variant="outline" className="bg-white">
+                            {projectList.length}
+                          </Badge>
+                          {clickedPriority === quadrant && (
+                            <div className="text-xs text-gray-500 bg-white px-2 py-1 rounded">
+                              Click outside to close
+                            </div>
+                          )}
+                        </div>
                       </div>
                       
-                      {/* Fixed Hover Tooltip - Positioned as Modal */}
-                      {hoveredPriority === quadrant && (
+                      {/* Popup - Show on hover or click */}
+                      {isPopupVisible && (
                         <div className="fixed inset-0 z-50 pointer-events-none">
                           <div 
-                            className="absolute bg-white border rounded-lg shadow-2xl max-h-64 overflow-y-auto p-4 pointer-events-auto"
+                            className="priority-popup absolute bg-white border rounded-lg shadow-2xl max-h-64 overflow-y-auto p-4 pointer-events-auto"
                             style={{ 
                               left: '50%', 
                               top: '50%', 
@@ -681,7 +728,21 @@ export default function DashboardPage() {
                               maxWidth: '90vw'
                             }}
                           >
-                            <h4 className="font-semibold mb-2 text-gray-900">{quadrant} Projects:</h4>
+                            <div className="flex items-center justify-between mb-2">
+                              <h4 className="font-semibold text-gray-900">{quadrant} Projects:</h4>
+                              {clickedPriority === quadrant && (
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation()
+                                    setClickedPriority(null)
+                                  }}
+                                  className="text-gray-400 hover:text-gray-600 text-xl leading-none"
+                                  title="Close"
+                                >
+                                  ×
+                                </button>
+                              )}
+                            </div>
                             <div className="space-y-2">
                               {projectList.map((project) => (
                                 <div key={project.id} className="flex items-center justify-between p-2 bg-gray-50 rounded">
