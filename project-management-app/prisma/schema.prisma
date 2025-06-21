@@ -1,0 +1,245 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id       String @id @default(cuid())
+  username String @unique
+  email    String @unique
+  password String // Will be hashed
+  name     String?
+  avatar   String?
+  role     Role   @default(MEMBER)
+  activeStatus Boolean @default(true)
+  lastPasswordUpdate DateTime @default(now())
+  
+  projects        Project[]
+  assignedTasks   Task[]
+  createdTasks    Task[]      @relation("TaskCreator")
+  riskAssessments Risk[]
+  workItems       WorkItem[]
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Project {
+  id          String  @id @default(cuid())
+  name        String
+  description String?
+  status      ProjectStatus @default(PLANNING)
+  priority    Priority      @default(MEDIUM)
+  
+  // Enhanced Project Fields
+  businessImpact    Int    @default(1) // 1-10 scale
+  techEffort        Int    @default(1) // 1-10 scale
+  revenueUplift     Float? // Revenue Uplift in $
+  headcountSaving   Float? // Headcount Saving per month
+  projectValue      Float? // Project value in $
+  team              String? // Team responsible
+  country           String? // Country
+  pic               String? // Person in Charge
+  
+  // Timeline
+  startDate DateTime?
+  endDate   DateTime? // ETA
+  
+  // Project manager
+  managerId String?
+  manager   User?   @relation(fields: [managerId], references: [id])
+  
+  // Relations
+  tasks     Task[]
+  risks     Risk[]
+  workItems WorkItem[]
+  metrics   ProjectMetric[]
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Task {
+  id          String @id @default(cuid())
+  title       String
+  description String?
+  status      TaskStatus @default(TODO)
+  priority    Priority   @default(MEDIUM)
+  
+  // Impact/Effort matrix
+  impact Int @default(1) // 1-5 scale
+  effort Int @default(1) // 1-5 scale
+  
+  // Timeline
+  startDate DateTime?
+  endDate   DateTime?
+  dueDate   DateTime?
+  
+  // Kanban position
+  columnId String?
+  position Int     @default(0)
+  
+  // Relations
+  projectId String
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  
+  assigneeId String?
+  assignee   User?   @relation(fields: [assigneeId], references: [id])
+  
+  createdById String
+  createdBy   User   @relation("TaskCreator", fields: [createdById], references: [id])
+  
+  // Dependencies
+  dependencies Task[] @relation("TaskDependencies")
+  dependents   Task[] @relation("TaskDependencies")
+  
+  // Work breakdown structure
+  parentId String?
+  parent   Task?   @relation("TaskHierarchy", fields: [parentId], references: [id])
+  children Task[]  @relation("TaskHierarchy")
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model WorkItem {
+  id          String @id @default(cuid())
+  title       String
+  description String?
+  type        WorkItemType @default(TASK)
+  status      TaskStatus   @default(TODO)
+  
+  // Timeline for Gantt charts
+  startDate DateTime
+  endDate   DateTime
+  duration  Int // in days
+  
+  // WBS hierarchy
+  wbsCode  String // e.g., "1.2.3"
+  level    Int    @default(0)
+  parentId String?
+  parent   WorkItem? @relation("WorkItemHierarchy", fields: [parentId], references: [id])
+  children WorkItem[] @relation("WorkItemHierarchy")
+  
+  // Relations
+  projectId String
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  
+  assigneeId String?
+  assignee   User?   @relation(fields: [assigneeId], references: [id])
+  
+  // Dependencies
+  dependencies WorkItem[] @relation("WorkItemDependencies")
+  dependents   WorkItem[] @relation("WorkItemDependencies")
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Risk {
+  id          String @id @default(cuid())
+  title       String
+  description String
+  category    RiskCategory @default(TECHNICAL)
+  
+  // Risk assessment
+  probability Int @default(1) // 1-5 scale
+  impact      Int @default(1) // 1-5 scale
+  riskScore   Int @default(1) // calculated: probability * impact
+  
+  status         RiskStatus @default(IDENTIFIED)
+  mitigationPlan String?
+  
+  // Relations
+  projectId String
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  
+  assessorId String?
+  assessor   User?   @relation(fields: [assessorId], references: [id])
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model ProjectMetric {
+  id        String @id @default(cuid())
+  name      String
+  value     Float
+  unit      String?
+  category  MetricCategory @default(FINANCIAL)
+  
+  projectId String
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  
+  recordedAt DateTime @default(now())
+  createdAt  DateTime @default(now())
+}
+
+// Enums
+enum Role {
+  ADMIN
+  MANAGER
+  MEMBER
+}
+
+enum ProjectStatus {
+  PLANNING
+  IN_PROGRESS
+  UAT
+  DONE
+  CANCELLED
+}
+
+enum TaskStatus {
+  TODO
+  IN_PROGRESS
+  UAT
+  DONE
+  BLOCKED
+}
+
+enum Priority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+enum WorkItemType {
+  EPIC
+  FEATURE
+  TASK
+  BUG
+  SPIKE
+}
+
+enum RiskCategory {
+  TECHNICAL
+  BUSINESS
+  RESOURCE
+  SCHEDULE
+  QUALITY
+  EXTERNAL
+}
+
+enum RiskStatus {
+  IDENTIFIED
+  ASSESSED
+  MITIGATED
+  CLOSED
+}
+
+enum MetricCategory {
+  FINANCIAL
+  PERFORMANCE
+  QUALITY
+  TIMELINE
+  RESOURCE
+}
