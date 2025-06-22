@@ -95,10 +95,10 @@ export default function ProjectsPage() {
           <p className="text-gray-600 mt-1 sm:mt-2">Manage your project portfolio</p>
         </div>
         <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
-          {/* Enhanced Manage Projects Button */}
+          {/* Enhanced Manage Projects Button - Using Design System */}
           <Button 
             onClick={() => window.location.href = '/projects/manage'}
-            className="relative flex items-center justify-center gap-2 text-sm sm:text-base bg-white border-2 border-gray-200 hover:border-blue-300 text-gray-700 hover:text-blue-700 transition-all duration-300 transform hover:scale-105 px-4 sm:px-6 py-2 sm:py-3 rounded-lg font-medium shadow-sm hover:shadow-lg group"
+            className="bg-white border-2 border-slate-300 hover:border-blue-400 text-slate-700 hover:text-blue-700 font-semibold px-6 py-3 rounded-xl shadow-sm hover:shadow-md transition-all duration-200 transform hover:scale-105 focus:ring-4 focus:ring-blue-100 focus:outline-none hover:bg-blue-50 relative flex items-center justify-center gap-2 text-sm sm:text-base"
           >
             <div className="flex items-center gap-2">
               <div className="relative">
@@ -110,25 +110,25 @@ export default function ProjectsPage() {
             </div>
             
             {/* Subtle shine effect */}
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-blue-50 to-transparent opacity-0 group-hover:opacity-30 transform -skew-x-12 transition-opacity duration-500 rounded-lg"></div>
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-blue-50 to-transparent opacity-0 group-hover:opacity-30 transform -skew-x-12 transition-opacity duration-500 rounded-xl"></div>
           </Button>
           
-          {/* Enhanced New Project Button - Consistent with Dashboard */}
+          {/* Enhanced New Project Button - Using Design System */}
           <Button 
             onClick={() => window.location.href = '/projects/manage?action=create'}
-            className="relative flex items-center justify-center gap-2 text-sm sm:text-base bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 px-4 sm:px-6 py-2 sm:py-3 rounded-lg font-medium"
+            className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 border-0 focus:ring-4 focus:ring-blue-200 focus:outline-none relative flex items-center justify-center gap-2 text-sm sm:text-base"
           >
             <div className="flex items-center gap-2">
               <div className="relative">
                 <Plus className="h-4 w-4 sm:h-5 sm:w-5" />
-                <div className="absolute -top-1 -right-1 w-2 h-2 bg-yellow-400 rounded-full animate-pulse"></div>
+                <div className="absolute -top-1 -right-1 w-2 h-2 bg-amber-400 rounded-full animate-pulse"></div>
               </div>
               <span className="hidden sm:inline">Create New Project</span>
               <span className="sm:hidden">New Project</span>
             </div>
             
             {/* Shine effect */}
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-0 hover:opacity-20 transform -skew-x-12 transition-opacity duration-500 rounded-lg"></div>
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-0 hover:opacity-20 transform -skew-x-12 transition-opacity duration-500 rounded-xl"></div>
           </Button>
         </div>
       </div>
@@ -142,7 +142,7 @@ export default function ProjectsPage() {
                 <Eye className="h-5 w-5 sm:h-6 sm:w-6 text-blue-600" />
               </div>
               <div className="ml-3 sm:ml-4 min-w-0 flex-1">
-                <h3 className="text-xs sm:text-sm font-medium text-gray-500 mb-1">Total Projects</h3>
+                <h3 className="text-xs sm:text-sm font-medium text-slate-500 mb-1">Total Projects</h3>
                 <p className="text-lg sm:text-xl lg:text-2xl font-bold">{projects.length}</p>
               </div>
             </div>
@@ -152,11 +152,11 @@ export default function ProjectsPage() {
         <Card>
           <CardContent className="p-4 sm:p-6">
             <div className="flex items-start">
-              <div className="bg-green-100 p-2 sm:p-3 rounded-lg flex-shrink-0">
-                <Users className="h-5 w-5 sm:h-6 sm:w-6 text-green-600" />
+              <div className="bg-emerald-100 p-2 sm:p-3 rounded-lg flex-shrink-0">
+                <Users className="h-5 w-5 sm:h-6 sm:w-6 text-emerald-600" />
               </div>
               <div className="ml-3 sm:ml-4 min-w-0 flex-1">
-                <h3 className="text-xs sm:text-sm font-medium text-gray-500 mb-1">Active Projects</h3>
+                <h3 className="text-xs sm:text-sm font-medium text-slate-500 mb-1">Active Projects</h3>
                 <p className="text-lg sm:text-xl lg:text-2xl font-bold">
                   {projects.filter(p => p.status === 'IN_PROGRESS' || p.status === 'UAT').length}
                 </p>
@@ -168,11 +168,11 @@ export default function ProjectsPage() {
         <Card>
           <CardContent className="p-4 sm:p-6">
             <div className="flex items-start">
-              <div className="bg-purple-100 p-2 sm:p-3 rounded-lg flex-shrink-0">
-                <DollarSign className="h-5 w-5 sm:h-6 sm:w-6 text-purple-600" />
+              <div className="bg-blue-100 p-2 sm:p-3 rounded-lg flex-shrink-0">
+                <DollarSign className="h-5 w-5 sm:h-6 sm:w-6 text-blue-600" />
               </div>
               <div className="ml-3 sm:ml-4 min-w-0 flex-1">
-                <h3 className="text-xs sm:text-sm font-medium text-gray-500 mb-1">Total Value</h3>
+                <h3 className="text-xs sm:text-sm font-medium text-slate-500 mb-1">Total Value</h3>
                 <div className="text-sm sm:text-lg lg:text-xl font-bold leading-tight">
                   <span className="sm:hidden">
                     {formatCurrencyCompact(projects.reduce((sum, p) => sum + (p.projectValue || 0), 0))}
@@ -189,11 +189,11 @@ export default function ProjectsPage() {
         <Card>
           <CardContent className="p-4 sm:p-6">
             <div className="flex items-start">
-              <div className="bg-orange-100 p-2 sm:p-3 rounded-lg flex-shrink-0">
-                <TrendingUp className="h-5 w-5 sm:h-6 sm:w-6 text-orange-600" />
+              <div className="bg-amber-100 p-2 sm:p-3 rounded-lg flex-shrink-0">
+                <TrendingUp className="h-5 w-5 sm:h-6 sm:w-6 text-amber-600" />
               </div>
               <div className="ml-3 sm:ml-4 min-w-0 flex-1">
-                <h3 className="text-xs sm:text-sm font-medium text-gray-500 mb-1">Revenue Uplift</h3>
+                <h3 className="text-xs sm:text-sm font-medium text-slate-500 mb-1">Revenue Uplift</h3>
                 <div className="text-sm sm:text-lg lg:text-xl font-bold leading-tight">
                   <span className="sm:hidden">
                     {formatCurrencyCompact(projects.reduce((sum, p) => sum + (p.revenueUplift || 0), 0))}

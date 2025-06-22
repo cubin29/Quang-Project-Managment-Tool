@@ -129,10 +129,10 @@ export default function Navigation() {
 
   const getRoleBadgeColor = (role: string) => {
     switch (role) {
-      case 'ADMIN': return 'bg-gradient-to-r from-red-500 to-pink-500 text-white'
-      case 'MANAGER': return 'bg-gradient-to-r from-blue-500 to-indigo-500 text-white'
-      case 'MEMBER': return 'bg-gradient-to-r from-green-500 to-emerald-500 text-white'
-      default: return 'bg-gradient-to-r from-gray-500 to-slate-500 text-white'
+      case 'ADMIN': return 'bg-gradient-to-r from-red-600 to-red-700 text-white shadow-lg'
+      case 'MANAGER': return 'bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-lg'
+      case 'MEMBER': return 'bg-gradient-to-r from-emerald-600 to-emerald-700 text-white shadow-lg'
+      default: return 'bg-gradient-to-r from-slate-500 to-slate-600 text-white shadow-lg'
     }
   }
 
@@ -150,25 +150,25 @@ export default function Navigation() {
 
   return (
     <>
-      {/* Modern Navigation Bar */}
-      <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-gray-200/50 shadow-sm">
+      {/* Modern Navigation Bar with Design System */}
+      <nav className="sticky top-0 z-50 bg-white/95 backdrop-blur-xl border-b border-slate-200 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
-            {/* Logo/Brand */}
+            {/* Logo/Brand - Updated with Design System */}
             <Link 
               href="/" 
               className="flex items-center space-x-3 group"
             >
-              <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center group-hover:scale-105 transition-transform duration-200">
+              <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-blue-700 rounded-xl flex items-center justify-center group-hover:scale-105 transition-transform duration-200 shadow-lg">
                 <span className="text-white font-bold text-sm">PM</span>
               </div>
-              <span className="text-xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent">
+              <span className="text-xl font-bold bg-gradient-to-r from-slate-900 to-slate-600 bg-clip-text text-transparent">
                 Project Manager
               </span>
             </Link>
             
-            {/* Desktop Navigation */}
-            <div className="hidden lg:flex items-center space-x-1">
+            {/* Desktop Navigation - Updated with Design System */}
+            <div className="hidden lg:flex items-center space-x-2">
               {navigationItems.map((item) => {
                 const Icon = item.icon
                 const isActive = isActiveRoute(item.href)
@@ -177,13 +177,13 @@ export default function Navigation() {
                   <Link
                     key={item.href}
                     href={item.href}
-                    className={`relative flex items-center space-x-2 px-4 py-2 rounded-lg font-medium transition-all duration-200 group ${
-                      isActive
-                        ? 'bg-gradient-to-r from-blue-50 to-purple-50 text-blue-700 shadow-sm'
-                        : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                    className={`relative flex items-center space-x-3 px-4 py-3 rounded-xl font-medium transition-all duration-200 ${
+                      isActive 
+                        ? 'bg-gradient-to-r from-blue-50 to-blue-100 text-blue-700 shadow-sm border border-blue-200' 
+                        : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
                     }`}
                   >
-                    <Icon className={`h-4 w-4 ${isActive ? 'text-blue-600' : 'text-gray-500 group-hover:text-gray-700'}`} />
+                    <Icon className={`h-4 w-4 ${isActive ? 'text-blue-600' : 'text-slate-500 hover:text-slate-700'}`} />
                     <span>{item.label}</span>
                     {isActive && (
                       <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-1 h-1 bg-blue-600 rounded-full"></div>
@@ -193,80 +193,77 @@ export default function Navigation() {
               })}
             </div>
 
-            {/* User Section */}
+            {/* User Section - Updated with Design System */}
             <div className="flex items-center space-x-4">
               {loading ? (
-                <div className="w-10 h-10 bg-gray-200 rounded-full animate-pulse"></div>
+                <div className="w-10 h-10 bg-slate-200 rounded-full animate-pulse"></div>
               ) : user ? (
                 <div className="relative">
                   <button
                     onClick={() => setShowUserMenu(!showUserMenu)}
-                    className="flex items-center space-x-3 p-2 rounded-xl hover:bg-gray-50 transition-all duration-200 group"
+                    className="flex items-center space-x-3 p-2 rounded-xl hover:bg-slate-50 transition-all duration-200 group"
                   >
                     <div className="relative">
-                      <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-full flex items-center justify-center text-sm font-semibold shadow-lg">
+                      <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-full flex items-center justify-center text-sm font-semibold shadow-lg">
                         {getUserInitials(user.name)}
                       </div>
-                      <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 border-2 border-white rounded-full"></div>
+                      <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-emerald-500 border-2 border-white rounded-full"></div>
                     </div>
                     <div className="hidden sm:block text-left">
-                      <div className="text-sm font-semibold text-gray-900">{user.name}</div>
-                      <div className="text-xs text-gray-500">{user.role}</div>
+                      <div className="text-sm font-semibold text-slate-900">{user.name}</div>
+                      <div className="text-xs text-slate-500">{user.role}</div>
                     </div>
-                    <ChevronDown className={`h-4 w-4 text-gray-500 transition-transform duration-200 ${showUserMenu ? 'rotate-180' : ''}`} />
+                    <ChevronDown className="h-4 w-4 text-slate-400 group-hover:text-slate-600 transition-colors" />
                   </button>
 
-                  {/* Enhanced User Dropdown */}
+                  {/* Enhanced User Dropdown Menu */}
                   {showUserMenu && (
-                    <div className="absolute right-0 mt-2 w-80 bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-gray-200/50 z-50 overflow-hidden">
+                    <div className="absolute right-0 mt-2 w-80 bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-slate-200 z-50 overflow-hidden">
                       {/* User Info Header */}
-                      <div className="p-6 bg-gradient-to-r from-blue-50 to-purple-50 border-b border-gray-100">
+                      <div className="p-6 bg-gradient-to-r from-blue-50 to-blue-100 border-b border-slate-200">
                         <div className="flex items-center space-x-4">
                           <div className="relative">
-                            <div className="w-14 h-14 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-full flex items-center justify-center text-lg font-bold shadow-lg">
+                            <div className="w-14 h-14 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-full flex items-center justify-center text-lg font-bold shadow-lg">
                               {getUserInitials(user.name)}
                             </div>
-                            <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-green-500 border-3 border-white rounded-full"></div>
+                            <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-emerald-500 border-3 border-white rounded-full"></div>
                           </div>
                           <div className="flex-1 min-w-0">
-                            <p className="text-lg font-semibold text-gray-900 truncate">
-                              {user.name}
-                            </p>
-                            <p className="text-sm text-gray-600 truncate">
-                              {user.email}
-                            </p>
-                            <span className={`inline-flex px-3 py-1 text-xs font-semibold rounded-full mt-2 ${getRoleBadgeColor(user.role)}`}>
+                            <h3 className="text-lg font-bold text-slate-900 truncate">{user.name}</h3>
+                            <p className="text-sm text-slate-600 truncate">{user.email}</p>
+                            <div className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium mt-2 ${getRoleBadgeColor(user.role)}`}>
                               {user.role}
-                            </span>
+                            </div>
                           </div>
                         </div>
                       </div>
-                      
+
                       {/* Menu Items */}
-                      <div className="py-3">
+                      <div className="p-2">
                         <Link
                           href="/auth/account"
-                          className="flex items-center px-6 py-3 text-sm text-gray-700 hover:bg-gray-50 transition-colors group"
+                          className="flex items-center w-full p-3 rounded-xl hover:bg-slate-50 transition-all duration-200 group"
                           onClick={() => setShowUserMenu(false)}
                         >
-                          <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center mr-3 group-hover:bg-blue-100 transition-colors">
-                            <Settings className="h-5 w-5 text-gray-600 group-hover:text-blue-600" />
+                          <div className="w-10 h-10 bg-slate-100 rounded-lg flex items-center justify-center mr-3 group-hover:bg-blue-100 transition-colors">
+                            <Settings className="h-5 w-5 text-slate-600 group-hover:text-blue-600" />
                           </div>
                           <div>
-                            <div className="font-medium">Account Settings</div>
-                            <div className="text-xs text-gray-500">Manage your profile</div>
+                            <div className="text-sm font-medium text-slate-900">Account Settings</div>
+                            <div className="text-xs text-slate-500">Manage your profile and preferences</div>
                           </div>
                         </Link>
+                        
                         <button
                           onClick={handleLogout}
-                          className="w-full flex items-center px-6 py-3 text-sm text-red-600 hover:bg-red-50 transition-colors group"
+                          className="flex items-center w-full p-3 rounded-xl hover:bg-red-50 transition-all duration-200 group"
                         >
-                          <div className="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center mr-3 group-hover:bg-red-200 transition-colors">
-                            <LogOut className="h-5 w-5 text-red-600" />
+                          <div className="w-10 h-10 bg-slate-100 rounded-lg flex items-center justify-center mr-3 group-hover:bg-red-100 transition-colors">
+                            <LogOut className="h-5 w-5 text-slate-600 group-hover:text-red-600" />
                           </div>
                           <div>
-                            <div className="font-medium">Sign Out</div>
-                            <div className="text-xs text-red-500">End your session</div>
+                            <div className="text-sm font-medium text-slate-900 group-hover:text-red-700">Sign Out</div>
+                            <div className="text-xs text-slate-500">Sign out of your account</div>
                           </div>
                         </button>
                       </div>
@@ -277,13 +274,13 @@ export default function Navigation() {
                 <div className="flex items-center space-x-3">
                   <Link 
                     href="/auth/login" 
-                    className="text-gray-600 hover:text-gray-900 font-medium transition-colors"
+                    className="bg-transparent hover:bg-slate-100 text-slate-600 hover:text-slate-800 font-medium px-4 py-2 rounded-lg transition-all duration-200 border-0 focus:ring-3 focus:ring-slate-200 focus:outline-none"
                   >
-                    Login
+                    Sign In
                   </Link>
                   <Link 
                     href="/auth/register" 
-                    className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-4 py-2 rounded-lg font-medium transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
+                    className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-medium px-4 py-2 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 transform hover:scale-105 border-0 focus:ring-3 focus:ring-blue-200 focus:outline-none text-sm"
                   >
                     Sign Up
                   </Link>
@@ -293,12 +290,12 @@ export default function Navigation() {
               {/* Mobile Menu Button */}
               <button
                 onClick={() => setShowMobileMenu(!showMobileMenu)}
-                className="lg:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors"
+                className="lg:hidden p-2 rounded-lg hover:bg-slate-100 transition-colors"
               >
                 {showMobileMenu ? (
-                  <X className="h-6 w-6 text-gray-600" />
+                  <X className="h-6 w-6 text-slate-600" />
                 ) : (
-                  <Menu className="h-6 w-6 text-gray-600" />
+                  <Menu className="h-6 w-6 text-slate-600" />
                 )}
               </button>
             </div>
@@ -306,47 +303,34 @@ export default function Navigation() {
         </div>
       </nav>
 
-      {/* Mobile Menu */}
+      {/* Enhanced Mobile Menu */}
       {showMobileMenu && (
-        <div className="lg:hidden fixed inset-0 z-50 bg-black/20 backdrop-blur-sm">
-          <div className="absolute top-16 left-0 right-0 bg-white/95 backdrop-blur-xl border-b border-gray-200 shadow-xl">
-            <div className="max-w-7xl mx-auto px-4 py-6">
-              <div className="space-y-2">
-                {navigationItems.map((item) => {
-                  const Icon = item.icon
-                  const isActive = isActiveRoute(item.href)
-                  
-                  return (
-                    <Link
-                      key={item.href}
-                      href={item.href}
-                      onClick={() => setShowMobileMenu(false)}
-                      className={`flex items-center space-x-3 px-4 py-3 rounded-xl transition-all duration-200 ${
-                        isActive
-                          ? 'bg-gradient-to-r from-blue-50 to-purple-50 text-blue-700'
-                          : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
-                      }`}
-                    >
-                      <Icon className={`h-5 w-5 ${isActive ? 'text-blue-600' : 'text-gray-500'}`} />
-                      <span className="font-medium">{item.label}</span>
-                    </Link>
-                  )
-                })}
-              </div>
+        <div className="lg:hidden fixed inset-0 z-40 bg-black bg-opacity-50 backdrop-blur-sm" onClick={() => setShowMobileMenu(false)}>
+          <div className="fixed top-16 left-0 right-0 bg-white/95 backdrop-blur-xl border-b border-slate-200 shadow-xl" onClick={(e) => e.stopPropagation()}>
+            <div className="p-4 space-y-2">
+              {navigationItems.map((item) => {
+                const Icon = item.icon
+                const isActive = isActiveRoute(item.href)
+                
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className={`relative flex items-center space-x-3 px-4 py-3 rounded-xl font-medium transition-all duration-200 ${
+                      isActive 
+                        ? 'bg-gradient-to-r from-blue-50 to-blue-100 text-blue-700 shadow-sm border border-blue-200' 
+                        : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+                    }`}
+                    onClick={() => setShowMobileMenu(false)}
+                  >
+                    <Icon className={`h-5 w-5 ${isActive ? 'text-blue-600' : 'text-slate-500'}`} />
+                    <span className="font-medium">{item.label}</span>
+                  </Link>
+                )
+              })}
             </div>
           </div>
         </div>
-      )}
-      
-      {/* Overlay to close menus when clicking outside */}
-      {(showUserMenu || showMobileMenu) && (
-        <div 
-          className="fixed inset-0 z-40" 
-          onClick={() => {
-            setShowUserMenu(false)
-            setShowMobileMenu(false)
-          }}
-        ></div>
       )}
     </>
   )

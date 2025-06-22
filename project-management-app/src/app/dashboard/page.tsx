@@ -340,51 +340,51 @@ export default function DashboardPage() {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'DONE': return 'bg-green-100 text-green-800'
-      case 'IN_PROGRESS': return 'bg-blue-100 text-blue-800'
-      case 'UAT': return 'bg-indigo-100 text-indigo-800'
-      case 'PLANNING': return 'bg-yellow-100 text-yellow-800'
-      case 'CANCELLED': return 'bg-red-100 text-red-800'
-      default: return 'bg-gray-100 text-gray-800'
+      case 'DONE': return 'status-done'
+      case 'IN_PROGRESS': return 'status-in-progress'
+      case 'UAT': return 'status-uat'
+      case 'PLANNING': return 'status-planning'
+      case 'CANCELLED': return 'status-cancelled'
+      default: return 'bg-slate-100 text-slate-800 border border-slate-200'
     }
   }
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
-      case 'URGENT': return 'bg-red-100 text-red-800 border-red-200'
-      case 'HIGH': return 'bg-orange-100 text-orange-800 border-orange-200'
-      case 'MEDIUM': return 'bg-yellow-100 text-yellow-800 border-yellow-200'
-      case 'LOW': return 'bg-green-100 text-green-800 border-green-200'
-      default: return 'bg-gray-100 text-gray-800 border-gray-200'
+      case 'URGENT': return 'priority-urgent'
+      case 'HIGH': return 'priority-high'
+      case 'MEDIUM': return 'priority-medium'
+      case 'LOW': return 'priority-low'
+      default: return 'bg-slate-100 text-slate-800 border border-slate-200'
     }
   }
 
   const getQuadrantColor = (quadrant: string) => {
     switch (quadrant) {
-      case 'Quick Wins': return 'bg-green-100 text-green-800 border-green-200'
-      case 'Major Projects': return 'bg-blue-100 text-blue-800 border-blue-200'
-      case 'Fill-ins': return 'bg-yellow-100 text-yellow-800 border-yellow-200'
-      case 'Thankless Tasks': return 'bg-red-100 text-red-800 border-red-200'
-      default: return 'bg-gray-100 text-gray-800 border-gray-200'
+      case 'Quick Wins': return 'bg-emerald-100 text-emerald-800 border border-emerald-200'
+      case 'Major Projects': return 'bg-blue-100 text-blue-800 border border-blue-200'
+      case 'Fill-ins': return 'bg-amber-100 text-amber-800 border border-amber-200'
+      case 'Thankless Tasks': return 'bg-red-100 text-red-800 border border-red-200'
+      default: return 'bg-slate-100 text-slate-800 border border-slate-200'
     }
   }
 
   const getQuadrantIcon = (quadrant: string) => {
     switch (quadrant) {
-      case 'Quick Wins': return <Zap className="h-4 w-4 text-green-600" />
+      case 'Quick Wins': return <Zap className="h-4 w-4 text-emerald-600" />
       case 'Major Projects': return <Target className="h-4 w-4 text-blue-600" />
-      case 'Fill-ins': return <Clock className="h-4 w-4 text-yellow-600" />
+      case 'Fill-ins': return <Clock className="h-4 w-4 text-amber-600" />
       case 'Thankless Tasks': return <AlertTriangle className="h-4 w-4 text-red-600" />
-      default: return <Activity className="h-4 w-4 text-gray-600" />
+      default: return <Activity className="h-4 w-4 text-slate-600" />
     }
   }
 
   const getActionItemStatusColor = (status: string) => {
     switch (status) {
-      case 'completed': return 'bg-green-100 text-green-800'
+      case 'completed': return 'bg-emerald-100 text-emerald-800'
       case 'in_progress': return 'bg-blue-100 text-blue-800'
       case 'pending': return 'bg-red-100 text-red-800'
-      default: return 'bg-gray-100 text-gray-800'
+      default: return 'bg-slate-100 text-slate-800'
     }
   }
 
@@ -450,28 +450,28 @@ export default function DashboardPage() {
             <p className="text-gray-600 mt-1 sm:mt-2">Strategic overview of project portfolio and business impact</p>
           </div>
           <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
-            <Button variant="outline" className="flex items-center justify-center gap-2 text-sm sm:text-base">
+            <Button className="bg-white border-2 border-slate-300 hover:border-blue-400 text-slate-700 hover:text-blue-700 font-semibold px-6 py-3 rounded-xl shadow-sm hover:shadow-md transition-all duration-200 transform hover:scale-105 focus:ring-4 focus:ring-blue-100 focus:outline-none hover:bg-blue-50 flex items-center justify-center gap-2 text-sm sm:text-base">
               <Target className="h-4 w-4" />
               <span className="hidden sm:inline">Strategic Planning</span>
               <span className="sm:hidden">Strategy</span>
             </Button>
             
-            {/* Enhanced New Project Button */}
+            {/* Enhanced New Project Button - Using Design System */}
             <Button 
               onClick={() => router.push('/projects/manage?action=create')}
-              className="relative flex items-center justify-center gap-2 text-sm sm:text-base bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 px-4 sm:px-6 py-2 sm:py-3 rounded-lg font-medium"
+              className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 border-0 focus:ring-4 focus:ring-blue-200 focus:outline-none relative flex items-center justify-center gap-2 text-sm sm:text-base"
             >
               <div className="flex items-center gap-2">
                 <div className="relative">
                   <Plus className="h-4 w-4 sm:h-5 sm:w-5" />
-                  <div className="absolute -top-1 -right-1 w-2 h-2 bg-yellow-400 rounded-full animate-pulse"></div>
+                  <div className="absolute -top-1 -right-1 w-2 h-2 bg-amber-400 rounded-full animate-pulse"></div>
                 </div>
                 <span className="hidden sm:inline">Create New Project</span>
                 <span className="sm:hidden">New Project</span>
               </div>
               
               {/* Shine effect */}
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-0 hover:opacity-20 transform -skew-x-12 transition-opacity duration-500 rounded-lg"></div>
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-0 hover:opacity-20 transform -skew-x-12 transition-opacity duration-500 rounded-xl"></div>
             </Button>
           </div>
         </div>

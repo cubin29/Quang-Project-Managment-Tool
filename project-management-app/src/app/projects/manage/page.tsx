@@ -418,22 +418,22 @@ export default function ProjectManagePage() {
             <h1 className="text-3xl font-bold text-gray-900">Project Management</h1>
             <p className="text-gray-600 mt-2">Create, edit, and manage your project portfolio</p>
           </div>
-          {/* Enhanced Add Project Button */}
+          {/* Enhanced Add Project Button - Using Design System */}
           <Button 
             onClick={addNewProject}
-            className="relative flex items-center justify-center gap-2 text-sm sm:text-base bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 px-4 sm:px-6 py-2 sm:py-3 rounded-lg font-medium"
+            className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 border-0 focus:ring-4 focus:ring-blue-200 focus:outline-none relative flex items-center justify-center gap-2 text-sm sm:text-base"
           >
             <div className="flex items-center gap-2">
               <div className="relative">
                 <Plus className="h-4 w-4 sm:h-5 sm:w-5" />
-                <div className="absolute -top-1 -right-1 w-2 h-2 bg-yellow-400 rounded-full animate-pulse"></div>
+                <div className="absolute -top-1 -right-1 w-2 h-2 bg-amber-400 rounded-full animate-pulse"></div>
               </div>
               <span className="hidden sm:inline">Add New Project</span>
               <span className="sm:hidden">Add Project</span>
             </div>
             
             {/* Shine effect */}
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-0 hover:opacity-20 transform -skew-x-12 transition-opacity duration-500 rounded-lg"></div>
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-0 hover:opacity-20 transform -skew-x-12 transition-opacity duration-500 rounded-xl"></div>
           </Button>
         </div>
 
@@ -447,12 +447,13 @@ export default function ProjectManagePage() {
                 {editingProjects.length > 1 && (
                   <div className="flex gap-2">
                     <Button 
-                      variant="outline" 
+                      className="bg-white border-2 border-slate-300 hover:border-blue-400 text-slate-700 hover:text-blue-700 font-semibold px-6 py-3 rounded-xl shadow-sm hover:shadow-md transition-all duration-200 transform hover:scale-105 focus:ring-4 focus:ring-blue-100 focus:outline-none hover:bg-blue-50"
                       onClick={() => setEditingProjects([])}
                     >
                       Cancel All
                     </Button>
                     <Button 
+                      className="bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 border-0 focus:ring-4 focus:ring-emerald-200 focus:outline-none"
                       onClick={saveProjects} 
                       disabled={saving}
                     >

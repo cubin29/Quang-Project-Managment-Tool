@@ -55,25 +55,25 @@ export function generateWBSCode(parentCode: string, position: number): string {
 
 export function getStatusColor(status: string): string {
   const colors: Record<string, string> = {
-    TODO: 'bg-gray-100 text-gray-800',
-    IN_PROGRESS: 'bg-blue-100 text-blue-800',
-    UAT: 'bg-indigo-100 text-indigo-800',
-    DONE: 'bg-green-100 text-green-800',
-    BLOCKED: 'bg-red-100 text-red-800',
-    PLANNING: 'bg-purple-100 text-purple-800',
-    ON_HOLD: 'bg-orange-100 text-orange-800',
-    COMPLETED: 'bg-green-100 text-green-800',
-    CANCELLED: 'bg-red-100 text-red-800'
+    TODO: 'bg-slate-100 text-slate-800 border border-slate-200',
+    IN_PROGRESS: 'status-in-progress',
+    UAT: 'status-uat',
+    DONE: 'status-done',
+    BLOCKED: 'status-cancelled',
+    PLANNING: 'status-planning',
+    ON_HOLD: 'bg-amber-100 text-amber-800 border border-amber-200',
+    COMPLETED: 'status-done',
+    CANCELLED: 'status-cancelled'
   }
-  return colors[status] || 'bg-gray-100 text-gray-800'
+  return colors[status] || 'bg-slate-100 text-slate-800 border border-slate-200'
 }
 
 export function getPriorityColor(priority: string): string {
   const colors: Record<string, string> = {
-    LOW: 'bg-green-100 text-green-800',
-    MEDIUM: 'bg-yellow-100 text-yellow-800',
-    HIGH: 'bg-orange-100 text-orange-800',
-    URGENT: 'bg-red-100 text-red-800'
+    LOW: 'priority-low',
+    MEDIUM: 'priority-medium',
+    HIGH: 'priority-high',
+    URGENT: 'priority-urgent'
   }
-  return colors[priority] || 'bg-gray-100 text-gray-800'
+  return colors[priority] || 'bg-slate-100 text-slate-800 border border-slate-200'
 } 

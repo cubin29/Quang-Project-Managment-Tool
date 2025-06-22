@@ -33,7 +33,8 @@ import {
   RefreshCw,
   Zap,
   Award,
-  Briefcase
+  Briefcase,
+  Download
 } from 'lucide-react'
 
 interface Project {
@@ -202,10 +203,18 @@ export default function AnalyticsPage() {
             <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900">Business Intelligence Analytics</h1>
             <p className="text-gray-600 mt-1 sm:mt-2">Deep insights into project portfolio performance and business impact</p>
           </div>
-          <Button variant="outline" onClick={() => fetchProjects()} className="flex items-center justify-center gap-2 text-sm sm:text-base">
-            <RefreshCw className="h-4 w-4" />
-            Refresh Data
-          </Button>
+          <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
+            <Button className="bg-white border-2 border-slate-300 hover:border-blue-400 text-slate-700 hover:text-blue-700 font-semibold px-6 py-3 rounded-xl shadow-sm hover:shadow-md transition-all duration-200 transform hover:scale-105 focus:ring-4 focus:ring-blue-100 focus:outline-none hover:bg-blue-50 flex items-center justify-center gap-2 text-sm sm:text-base">
+              <Download className="h-4 w-4" />
+              <span className="hidden sm:inline">Export Report</span>
+              <span className="sm:hidden">Export</span>
+            </Button>
+            <Button className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 border-0 focus:ring-4 focus:ring-blue-200 focus:outline-none flex items-center justify-center gap-2 text-sm sm:text-base">
+              <RefreshCw className="h-4 w-4" />
+              <span className="hidden sm:inline">Refresh Data</span>
+              <span className="sm:hidden">Refresh</span>
+            </Button>
+          </div>
         </div>
 
         {/* Strategic KPIs */}
