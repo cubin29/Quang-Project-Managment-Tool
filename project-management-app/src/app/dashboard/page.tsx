@@ -527,14 +527,14 @@ export default function DashboardPage() {
     // Check if this position conflicts with existing positions
     let finalX = baseX
     let finalY = baseY
-    const minDistance = 12 // Minimum distance between dots
+    const minDistance = 4 // Very small minimum distance
     
     // Get all existing positions
     const existingPositions = Array.from(projectPositionsRef.current.values())
     
-    // Check for conflicts and adjust position if needed
+    // Check for conflicts and adjust position if needed with VERY small movements
     let attempts = 0
-    while (attempts < 50) {
+    while (attempts < 20) {
       let hasConflict = false
       
       for (const existingPos of existingPositions) {
@@ -545,13 +545,18 @@ export default function DashboardPage() {
         
         if (distance < minDistance) {
           hasConflict = true
-          // Move in a spiral pattern
+          // Move in TINY increments - just barely enough to avoid overlap
           const angle = (attempts * 45) % 360
-          const radius = Math.ceil(attempts / 8) * 8
-          finalX = baseX + Math.cos(angle * Math.PI / 180) * radius
-          finalY = baseY + Math.sin(angle * Math.PI / 180) * radius
+          const radius = 1 + (attempts * 0.3) // Very small radius, max 7px
+          let newX = baseX + Math.cos(angle * Math.PI / 180) * radius
+          let newY = baseY + Math.sin(angle * Math.PI / 180) * radius
           
-          // Keep within bounds
+          // Keep very close to original position - only allow 5% deviation max
+          const maxDeviation = 5
+          finalX = Math.max(baseX - maxDeviation, Math.min(baseX + maxDeviation, newX))
+          finalY = Math.max(baseY - maxDeviation, Math.min(baseY + maxDeviation, newY))
+          
+          // Still keep within overall matrix bounds
           finalX = Math.max(10, Math.min(90, finalX))
           finalY = Math.max(10, Math.min(90, finalY))
           break
@@ -1066,8 +1071,8 @@ export default function DashboardPage() {
                           onMouseEnter={() => setHoveredProject(project.id)}
                           onMouseLeave={() => setHoveredProject(null)}
                         >
-                          <div className={`w-7 h-7 rounded-full border-2 ${statusColor.bg} ${statusColor.border} 
-                            flex items-center justify-center text-white font-bold text-sm
+                          <div className={`w-5 h-5 rounded-full border-2 ${statusColor.bg} ${statusColor.border} 
+                            flex items-center justify-center text-white font-bold text-xs
                             hover:scale-110 transition-all duration-200 shadow-md
                             ${hoveredProject === project.id ? 'scale-110 ring-2 ring-blue-400' : ''}
                             ${clickedProject === project.id ? 'scale-125 ring-4 ring-green-400 shadow-lg' : ''}`}
