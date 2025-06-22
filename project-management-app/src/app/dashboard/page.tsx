@@ -191,12 +191,13 @@ export default function DashboardPage() {
     return 'Thankless Tasks'
   }
 
-  // Group projects by matrix quadrants for priority alerts
+  // Group projects by matrix quadrants for priority alerts - only incomplete projects
+  const incompleteProjects = projects.filter(p => p.status !== 'DONE')
   const matrixQuadrants = {
-    'Quick Wins': projects.filter(p => p.businessImpact >= 6 && p.techEffort <= 5),
-    'Major Projects': projects.filter(p => p.businessImpact >= 6 && p.techEffort > 5),
-    'Fill-ins': projects.filter(p => p.businessImpact < 6 && p.techEffort <= 5),
-    'Thankless Tasks': projects.filter(p => p.businessImpact < 6 && p.techEffort > 5)
+    'Quick Wins': incompleteProjects.filter(p => p.businessImpact >= 6 && p.techEffort <= 5),
+    'Major Projects': incompleteProjects.filter(p => p.businessImpact >= 6 && p.techEffort > 5),
+    'Fill-ins': incompleteProjects.filter(p => p.businessImpact < 6 && p.techEffort <= 5),
+    'Thankless Tasks': incompleteProjects.filter(p => p.businessImpact < 6 && p.techEffort > 5)
   }
 
   // Get projects with deadlines within 1 month
@@ -676,9 +677,9 @@ export default function DashboardPage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Activity className="h-5 w-5" />
-                Strategic Priority Matrix
+                Ongoing Projects Prioritisation
               </CardTitle>
-              <CardDescription>Projects prioritized by Impact/Effort quadrants</CardDescription>
+              <CardDescription>Incomplete projects prioritized by Impact/Effort quadrants</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-4 max-h-80 overflow-y-auto relative">
