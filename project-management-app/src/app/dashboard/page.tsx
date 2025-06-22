@@ -340,31 +340,31 @@ export default function DashboardPage() {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'DONE': return 'status-done'
-      case 'IN_PROGRESS': return 'status-in-progress'
-      case 'UAT': return 'status-uat'
-      case 'PLANNING': return 'status-planning'
-      case 'CANCELLED': return 'status-cancelled'
+      case 'DONE': return 'bg-emerald-200 text-emerald-900 border border-emerald-300'
+      case 'IN_PROGRESS': return 'bg-blue-200 text-blue-900 border border-blue-300'
+      case 'UAT': return 'bg-purple-200 text-purple-900 border border-purple-300'
+      case 'PLANNING': return 'bg-amber-200 text-amber-900 border border-amber-300'
+      case 'CANCELLED': return 'bg-red-200 text-red-900 border border-red-300'
       default: return 'bg-slate-100 text-slate-800 border border-slate-200'
     }
   }
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
-      case 'URGENT': return 'priority-urgent'
-      case 'HIGH': return 'priority-high'
-      case 'MEDIUM': return 'priority-medium'
-      case 'LOW': return 'priority-low'
+      case 'URGENT': return 'bg-red-200 text-red-900 border border-red-300'
+      case 'HIGH': return 'bg-orange-200 text-orange-900 border border-orange-300'
+      case 'MEDIUM': return 'bg-blue-200 text-blue-900 border border-blue-300'
+      case 'LOW': return 'bg-slate-200 text-slate-900 border border-slate-300'
       default: return 'bg-slate-100 text-slate-800 border border-slate-200'
     }
   }
 
   const getQuadrantColor = (quadrant: string) => {
     switch (quadrant) {
-      case 'Quick Wins': return 'bg-emerald-100 text-emerald-800 border border-emerald-200'
-      case 'Major Projects': return 'bg-blue-100 text-blue-800 border border-blue-200'
-      case 'Fill-ins': return 'bg-amber-100 text-amber-800 border border-amber-200'
-      case 'Thankless Tasks': return 'bg-red-100 text-red-800 border border-red-200'
+      case 'Quick Wins': return 'bg-emerald-200 text-emerald-900 border border-emerald-300'
+      case 'Major Projects': return 'bg-blue-200 text-blue-900 border border-blue-300'
+      case 'Fill-ins': return 'bg-amber-200 text-amber-900 border border-amber-300'
+      case 'Thankless Tasks': return 'bg-red-200 text-red-900 border border-red-300'
       default: return 'bg-slate-100 text-slate-800 border border-slate-200'
     }
   }
@@ -509,81 +509,81 @@ export default function DashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3 sm:gap-4">
-              <div className="bg-gradient-to-r from-gray-50 to-gray-100 border border-gray-200 p-3 sm:p-4 rounded-lg">
+              <div className="bg-gradient-to-r from-slate-100 to-slate-200 border border-slate-300 p-3 sm:p-4 rounded-lg">
                 <div className="flex items-start justify-between">
                   <div className="flex-1 min-w-0">
-                    <p className="text-xs font-medium text-gray-700 mb-1">Total Projects</p>
-                    <p className="text-xl sm:text-2xl font-bold text-gray-900 mb-1 sm:mb-2">{totalProjects}</p>
-                    <p className="text-xs text-gray-600 flex items-center">
+                    <p className="text-xs font-medium text-slate-800 mb-1">Total Projects</p>
+                    <p className="text-xl sm:text-2xl font-bold text-slate-900 mb-1 sm:mb-2">{totalProjects}</p>
+                    <p className="text-xs text-slate-700 flex items-center">
                       <Hash className="h-3 w-3 mr-1 flex-shrink-0" />
                       <span className="truncate">{statsFilter.toLowerCase()} portfolio</span>
                     </p>
                   </div>
-                  <div className="bg-gray-500 p-1.5 sm:p-2 rounded-lg ml-2 flex-shrink-0">
+                  <div className="bg-slate-600 p-1.5 sm:p-2 rounded-lg ml-2 flex-shrink-0">
                     <Briefcase className="h-4 w-4 sm:h-5 sm:w-5 text-white" />
                   </div>
                 </div>
               </div>
 
-              <div className="bg-gradient-to-r from-blue-50 to-blue-100 border border-blue-200 p-3 sm:p-4 rounded-lg">
+              <div className="bg-gradient-to-r from-blue-100 to-blue-200 border border-blue-300 p-3 sm:p-4 rounded-lg">
                 <div className="flex items-start justify-between">
                   <div className="flex-1 min-w-0">
-                    <p className="text-xs font-medium text-blue-700 mb-1">Portfolio Value</p>
+                    <p className="text-xs font-medium text-blue-800 mb-1">Portfolio Value</p>
                     <p className="text-lg sm:text-2xl font-bold text-blue-900 mb-1 sm:mb-2 truncate">{formatCurrency(totalProjectValue)}</p>
-                    <p className="text-xs text-blue-600 flex items-center">
+                    <p className="text-xs text-blue-700 flex items-center">
                       <ArrowUpRight className="h-3 w-3 mr-1 flex-shrink-0" />
                       <span className="truncate">Total investment</span>
                     </p>
                   </div>
-                  <div className="bg-blue-500 p-1.5 sm:p-2 rounded-lg ml-2 flex-shrink-0">
+                  <div className="bg-blue-600 p-1.5 sm:p-2 rounded-lg ml-2 flex-shrink-0">
                     <DollarSign className="h-4 w-4 sm:h-5 sm:w-5 text-white" />
                   </div>
                 </div>
               </div>
 
-              <div className="bg-gradient-to-r from-green-50 to-green-100 border border-green-200 p-3 sm:p-4 rounded-lg">
+              <div className="bg-gradient-to-r from-emerald-100 to-emerald-200 border border-emerald-300 p-3 sm:p-4 rounded-lg">
                 <div className="flex items-start justify-between">
                   <div className="flex-1 min-w-0">
-                    <p className="text-xs font-medium text-green-700 mb-1">Revenue Uplift</p>
-                    <p className="text-lg sm:text-2xl font-bold text-green-900 mb-1 sm:mb-2 truncate">{formatCurrency(totalRevenueUplift)}</p>
-                    <p className="text-xs text-green-600 flex items-center">
+                    <p className="text-xs font-medium text-emerald-800 mb-1">Revenue Uplift</p>
+                    <p className="text-lg sm:text-2xl font-bold text-emerald-900 mb-1 sm:mb-2 truncate">{formatCurrency(totalRevenueUplift)}</p>
+                    <p className="text-xs text-emerald-700 flex items-center">
                       <TrendingUp className="h-3 w-3 mr-1 flex-shrink-0" />
                       <span className="truncate">Projected annual</span>
                     </p>
                   </div>
-                  <div className="bg-green-500 p-1.5 sm:p-2 rounded-lg ml-2 flex-shrink-0">
+                  <div className="bg-emerald-600 p-1.5 sm:p-2 rounded-lg ml-2 flex-shrink-0">
                     <TrendingUp className="h-4 w-4 sm:h-5 sm:w-5 text-white" />
                   </div>
                 </div>
               </div>
 
-              <div className="bg-gradient-to-r from-purple-50 to-purple-100 border border-purple-200 p-3 sm:p-4 rounded-lg">
+              <div className="bg-gradient-to-r from-purple-100 to-purple-200 border border-purple-300 p-3 sm:p-4 rounded-lg">
                 <div className="flex items-start justify-between">
                   <div className="flex-1 min-w-0">
-                    <p className="text-xs font-medium text-purple-700 mb-1">HC Savings</p>
+                    <p className="text-xs font-medium text-purple-800 mb-1">HC Savings</p>
                     <p className="text-lg sm:text-2xl font-bold text-purple-900 mb-1 sm:mb-2">{totalHeadcountSaving.toFixed(1)}</p>
-                    <p className="text-xs text-purple-600 flex items-center">
+                    <p className="text-xs text-purple-700 flex items-center">
                       <Users className="h-3 w-3 mr-1 flex-shrink-0" />
                       <span className="truncate">FTE per month</span>
                     </p>
                   </div>
-                  <div className="bg-purple-500 p-1.5 sm:p-2 rounded-lg ml-2 flex-shrink-0">
+                  <div className="bg-purple-600 p-1.5 sm:p-2 rounded-lg ml-2 flex-shrink-0">
                     <Users className="h-4 w-4 sm:h-5 sm:w-5 text-white" />
                   </div>
                 </div>
               </div>
 
-              <div className="bg-gradient-to-r from-orange-50 to-orange-100 border border-orange-200 p-4 rounded-lg">
+              <div className="bg-gradient-to-r from-orange-100 to-orange-200 border border-orange-300 p-4 rounded-lg">
                 <div className="flex items-start justify-between">
                   <div className="flex-1 min-w-0">
-                    <p className="text-xs font-medium text-orange-700 mb-1">High Impact</p>
+                    <p className="text-xs font-medium text-orange-800 mb-1">High Impact</p>
                     <p className="text-2xl font-bold text-orange-900 mb-2">{highImpactProjects}</p>
-                    <p className="text-xs text-orange-600 flex items-center">
+                    <p className="text-xs text-orange-700 flex items-center">
                       <Target className="h-3 w-3 mr-1 flex-shrink-0" />
                       <span className="truncate">Impact score ≥ 8</span>
                     </p>
                   </div>
-                  <div className="bg-orange-500 p-2 rounded-lg ml-2 flex-shrink-0">
+                  <div className="bg-orange-600 p-2 rounded-lg ml-2 flex-shrink-0">
                     <Target className="h-5 w-5 text-white" />
                   </div>
                 </div>
@@ -782,7 +782,7 @@ export default function DashboardPage() {
                 })}
 
                 {/* ETA Alert Card - Always Visible */}
-                <div className="p-4 bg-red-50 border-2 border-red-200 rounded-lg">
+                <div className="p-4 bg-red-100 border-2 border-red-300 rounded-lg">
                   <div className="flex items-center gap-2 mb-3">
                     <AlertCircle className="h-4 w-4 text-red-600" />
                     <span className="font-medium text-red-800">
@@ -849,22 +849,22 @@ export default function DashboardPage() {
               </div>
 
               {/* Quadrant Labels */}
-              <div className="absolute top-1 sm:top-2 left-1 sm:left-2 text-xs font-semibold text-green-700 bg-green-100 px-1 sm:px-2 py-1 rounded z-30">
+              <div className="absolute top-1 sm:top-2 left-1 sm:left-2 text-xs font-semibold text-emerald-800 bg-emerald-200 px-1 sm:px-2 py-1 rounded z-30 border border-emerald-300">
                 <div className="hidden sm:block">Quick Wins</div>
                 <div className="sm:hidden">Quick</div>
                 <div className="text-xs font-normal hidden sm:block">High Impact, Low Effort</div>
               </div>
-              <div className="absolute top-1 sm:top-2 right-1 sm:right-2 text-xs font-semibold text-blue-700 bg-blue-100 px-1 sm:px-2 py-1 rounded z-30">
+              <div className="absolute top-1 sm:top-2 right-1 sm:right-2 text-xs font-semibold text-blue-800 bg-blue-200 px-1 sm:px-2 py-1 rounded z-30 border border-blue-300">
                 <div className="hidden sm:block">Major Projects</div>
                 <div className="sm:hidden">Major</div>
                 <div className="text-xs font-normal hidden sm:block">High Impact, High Effort</div>
               </div>
-              <div className="absolute bottom-1 sm:bottom-2 left-1 sm:left-2 text-xs font-semibold text-yellow-700 bg-yellow-100 px-1 sm:px-2 py-1 rounded z-30">
+              <div className="absolute bottom-1 sm:bottom-2 left-1 sm:left-2 text-xs font-semibold text-amber-800 bg-amber-200 px-1 sm:px-2 py-1 rounded z-30 border border-amber-300">
                 <div className="hidden sm:block">Fill-ins</div>
                 <div className="sm:hidden">Fill</div>
                 <div className="text-xs font-normal hidden sm:block">Low Impact, Low Effort</div>
               </div>
-              <div className="absolute bottom-1 sm:bottom-2 right-1 sm:right-2 text-xs font-semibold text-red-700 bg-red-100 px-1 sm:px-2 py-1 rounded z-30">
+              <div className="absolute bottom-1 sm:bottom-2 right-1 sm:right-2 text-xs font-semibold text-red-800 bg-red-200 px-1 sm:px-2 py-1 rounded z-30 border border-red-300">
                 <div className="hidden sm:block">Thankless Tasks</div>
                 <div className="sm:hidden">Tasks</div>
                 <div className="text-xs font-normal hidden sm:block">Low Impact, High Effort</div>
@@ -1004,19 +1004,18 @@ export default function DashboardPage() {
                     </div>
                     <div className="text-right ml-2">
                       <div className="flex items-center gap-1 text-blue-600 mb-1">
-                        <DollarSign className="h-3 w-3" />
                         <span className="font-bold text-sm">{formatCurrency(project.projectValue || 0)}</span>
                       </div>
                     </div>
                   </div>
 
                   <div className="space-y-2 text-xs">
-                    {project.revenueUplift && (
-                      <div className="flex items-center justify-between">
-                        <span className="text-gray-600">Revenue Uplift:</span>
-                        <span className="font-medium text-green-600">{formatCurrency(project.revenueUplift)}</span>
-                      </div>
-                    )}
+                    <div className="flex items-center justify-between">
+                      <span className="text-gray-600">Revenue Uplift:</span>
+                      <span className={`font-medium ${project.revenueUplift && project.revenueUplift > 0 ? 'text-green-600' : 'text-gray-400'}`}>
+                        {project.revenueUplift && project.revenueUplift > 0 ? formatCurrency(project.revenueUplift) : '-'}
+                      </span>
+                    </div>
 
                     {project.headcountSaving && (
                       <div className="flex items-center justify-between">
@@ -1041,7 +1040,7 @@ export default function DashboardPage() {
                       <div className="flex items-center justify-between">
                         <span className="text-gray-600">Country:</span>
                         <div className="flex items-center gap-1">
-                          <span className="text-base">{getCountryFlag(project.country)}</span>
+                          <span className="text-base">{getCountryFlag(project.country.replace(/^[A-Z]{2}\s/, ''))}</span>
                           <span className="font-medium">{project.country}</span>
                         </div>
                       </div>
