@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useEffect, useState } from 'react'
+import { useSearchParams, useRouter } from 'next/navigation'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Plus, Edit, Copy, Trash2, Save, Loader2, X } from 'lucide-react'
@@ -24,6 +25,8 @@ interface Project {
 }
 
 export default function ProjectManagePage() {
+  const searchParams = useSearchParams()
+  const router = useRouter()
   const [projects, setProjects] = useState<Project[]>([])
   const [editingProjects, setEditingProjects] = useState<Project[]>([])
   const [loading, setLoading] = useState(true)
@@ -36,6 +39,39 @@ export default function ProjectManagePage() {
   useEffect(() => {
     fetchProjects()
   }, [])
+
+  // Check for URL parameter to auto-create project
+  useEffect(() => {
+    const action = searchParams.get('action')
+    if (action === 'create' && !loading) {
+      // Wait a bit for the page to fully load, then trigger project creation
+      const timer = setTimeout(() => {
+        // Create new project directly here
+        const newProject: Project = {
+          name: '',
+          description: '',
+          status: 'PLANNING',
+          priority: 'MEDIUM',
+          businessImpact: 5,
+          techEffort: 5,
+          revenueUplift: 0,
+          headcountSaving: 0,
+          projectValue: 0,
+          team: '',
+          country: '',
+          pic: '',
+          startDate: '',
+          endDate: ''
+        }
+        setEditingProjects(prev => [...prev, newProject])
+        
+        // Clean up the URL parameter after triggering the action
+        router.replace('/projects/manage', { scroll: false })
+      }, 500)
+      
+      return () => clearTimeout(timer)
+    }
+  }, [searchParams, loading, router])
 
   const fetchProjects = async () => {
     try {
@@ -382,9 +418,22 @@ export default function ProjectManagePage() {
             <h1 className="text-3xl font-bold text-gray-900">Project Management</h1>
             <p className="text-gray-600 mt-2">Create, edit, and manage your project portfolio</p>
           </div>
-          <Button onClick={addNewProject} variant="default" className="flex items-center gap-2">
-            <Plus className="h-4 w-4" />
-            Add Project
+          {/* Enhanced Add Project Button */}
+          <Button 
+            onClick={addNewProject}
+            className="relative flex items-center justify-center gap-2 text-sm sm:text-base bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 px-4 sm:px-6 py-2 sm:py-3 rounded-lg font-medium"
+          >
+            <div className="flex items-center gap-2">
+              <div className="relative">
+                <Plus className="h-4 w-4 sm:h-5 sm:w-5" />
+                <div className="absolute -top-1 -right-1 w-2 h-2 bg-yellow-400 rounded-full animate-pulse"></div>
+              </div>
+              <span className="hidden sm:inline">Add New Project</span>
+              <span className="sm:hidden">Add Project</span>
+            </div>
+            
+            {/* Shine effect */}
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-0 hover:opacity-20 transform -skew-x-12 transition-opacity duration-500 rounded-lg"></div>
           </Button>
         </div>
 

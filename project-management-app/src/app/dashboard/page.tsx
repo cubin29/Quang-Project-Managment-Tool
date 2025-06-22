@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -73,6 +74,7 @@ interface ActionableItem {
 }
 
 export default function DashboardPage() {
+  const router = useRouter()
   const [projects, setProjects] = useState<Project[]>([])
   const [loading, setLoading] = useState(true)
   const [hoveredPriority, setHoveredPriority] = useState<string | null>(null)
@@ -453,9 +455,23 @@ export default function DashboardPage() {
               <span className="hidden sm:inline">Strategic Planning</span>
               <span className="sm:hidden">Strategy</span>
             </Button>
-            <Button className="flex items-center justify-center gap-2 text-sm sm:text-base">
-              <Plus className="h-4 w-4" />
-              New Project
+            
+            {/* Enhanced New Project Button */}
+            <Button 
+              onClick={() => router.push('/projects/manage?action=create')}
+              className="relative flex items-center justify-center gap-2 text-sm sm:text-base bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 px-4 sm:px-6 py-2 sm:py-3 rounded-lg font-medium"
+            >
+              <div className="flex items-center gap-2">
+                <div className="relative">
+                  <Plus className="h-4 w-4 sm:h-5 sm:w-5" />
+                  <div className="absolute -top-1 -right-1 w-2 h-2 bg-yellow-400 rounded-full animate-pulse"></div>
+                </div>
+                <span className="hidden sm:inline">Create New Project</span>
+                <span className="sm:hidden">New Project</span>
+              </div>
+              
+              {/* Shine effect */}
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-0 hover:opacity-20 transform -skew-x-12 transition-opacity duration-500 rounded-lg"></div>
             </Button>
           </div>
         </div>
@@ -1037,45 +1053,79 @@ export default function DashboardPage() {
           </CardContent>
         </Card>
 
-        {/* Actionable Items Section */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Zap className="h-5 w-5 text-yellow-500" />
-              Next Actionable Items
-            </CardTitle>
-            <CardDescription>Key tasks and milestones requiring your attention</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-3">
-              {actionableItems.map((item) => (
-                <div key={item.id} className="flex items-center justify-between p-4 bg-white border rounded-lg hover:shadow-md transition-shadow">
-                  <div className="flex items-center gap-4">
-                    <div className={`w-3 h-3 rounded-full ${
-                      item.status === 'completed' ? 'bg-green-500' : 
-                      item.status === 'in_progress' ? 'bg-blue-500' : 'bg-red-500'
-                    }`}></div>
-                    <div>
-                      <p className="font-medium text-gray-900">{item.task}</p>
-                      <p className="text-sm text-gray-600">{item.projectName}</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <Badge className={getActionItemStatusColor(item.status)}>
-                      {item.status.replace('_', ' ')}
-                    </Badge>
-                    <div className="text-sm text-gray-500 flex items-center gap-1">
-                      <Calendar className="h-3 w-3" />
-                      {new Date(item.dueDate).toLocaleDateString()}
-                    </div>
-                    {item.priority === 'high' && (
-                      <AlertTriangle className="h-4 w-4 text-red-500" />
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </CardContent>
+                 {/* Actionable Items Section */}
+         <Card>
+           <CardHeader>
+             <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
+               <div>
+                 <CardTitle className="flex items-center gap-2">
+                   <Zap className="h-5 w-5 text-yellow-500" />
+                   Next Actionable Items
+                 </CardTitle>
+                 <CardDescription>Key tasks and milestones requiring your attention</CardDescription>
+               </div>
+               
+               {/* Secondary New Project Button */}
+               <Button 
+                 onClick={() => router.push('/projects/manage?action=create')}
+                 variant="outline"
+                 className="flex items-center gap-2 border-blue-200 text-blue-600 hover:bg-blue-50 hover:border-blue-300 transition-all duration-200"
+               >
+                 <Plus className="h-4 w-4" />
+                 <span className="hidden sm:inline">Add Project</span>
+                 <span className="sm:hidden">Add</span>
+               </Button>
+             </div>
+           </CardHeader>
+                     <CardContent>
+             {actionableItems.length > 0 ? (
+               <div className="space-y-3">
+                 {actionableItems.map((item) => (
+                   <div key={item.id} className="flex items-center justify-between p-4 bg-white border rounded-lg hover:shadow-md transition-shadow">
+                     <div className="flex items-center gap-4">
+                       <div className={`w-3 h-3 rounded-full ${
+                         item.status === 'completed' ? 'bg-green-500' : 
+                         item.status === 'in_progress' ? 'bg-blue-500' : 'bg-red-500'
+                       }`}></div>
+                       <div>
+                         <p className="font-medium text-gray-900">{item.task}</p>
+                         <p className="text-sm text-gray-600">{item.projectName}</p>
+                       </div>
+                     </div>
+                     <div className="flex items-center gap-3">
+                       <Badge className={getActionItemStatusColor(item.status)}>
+                         {item.status.replace('_', ' ')}
+                       </Badge>
+                       <div className="text-sm text-gray-500 flex items-center gap-1">
+                         <Calendar className="h-3 w-3" />
+                         {new Date(item.dueDate).toLocaleDateString()}
+                       </div>
+                       {item.priority === 'high' && (
+                         <AlertTriangle className="h-4 w-4 text-red-500" />
+                       )}
+                     </div>
+                   </div>
+                 ))}
+               </div>
+             ) : (
+               <div className="text-center py-12">
+                 <div className="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
+                   <Briefcase className="h-8 w-8 text-gray-400" />
+                 </div>
+                 <h3 className="text-lg font-medium text-gray-900 mb-2">No Active Tasks</h3>
+                 <p className="text-gray-500 mb-6 max-w-sm mx-auto">
+                   Start your next strategic initiative by creating a new project with clear objectives and deliverables.
+                 </p>
+                 <Button 
+                   onClick={() => router.push('/projects/manage?action=create')}
+                   className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white"
+                 >
+                   <Plus className="h-4 w-4 mr-2" />
+                   Create Your First Project
+                 </Button>
+               </div>
+             )}
+           </CardContent>
         </Card>
       </div>
     </div>

@@ -2,9 +2,21 @@
 
 import React, { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
+import { useRouter, usePathname } from 'next/navigation'
 import { Button } from '@/components/ui/button'
-import { User, LogOut, Settings } from 'lucide-react'
+import { 
+  User, 
+  LogOut, 
+  Settings, 
+  ChevronDown, 
+  BarChart3, 
+  FolderOpen, 
+  Target, 
+  CheckSquare, 
+  Info,
+  Menu,
+  X
+} from 'lucide-react'
 
 interface User {
   id: string
@@ -16,9 +28,11 @@ interface User {
 
 export default function Navigation() {
   const router = useRouter()
+  const pathname = usePathname()
   const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
   const [showUserMenu, setShowUserMenu] = useState(false)
+  const [showMobileMenu, setShowMobileMenu] = useState(false)
 
   useEffect(() => {
     checkAuthStatus()
@@ -96,6 +110,7 @@ export default function Navigation() {
     
     setUser(null)
     setShowUserMenu(false)
+    setShowMobileMenu(false)
     
     // Dispatch custom event to update navigation
     window.dispatchEvent(new Event('authStateChanged'))
@@ -114,258 +129,225 @@ export default function Navigation() {
 
   const getRoleBadgeColor = (role: string) => {
     switch (role) {
-      case 'ADMIN': return 'bg-red-100 text-red-800'
-      case 'MANAGER': return 'bg-blue-100 text-blue-800'
-      case 'MEMBER': return 'bg-green-100 text-green-800'
-      default: return 'bg-gray-100 text-gray-800'
+      case 'ADMIN': return 'bg-gradient-to-r from-red-500 to-pink-500 text-white'
+      case 'MANAGER': return 'bg-gradient-to-r from-blue-500 to-indigo-500 text-white'
+      case 'MEMBER': return 'bg-gradient-to-r from-green-500 to-emerald-500 text-white'
+      default: return 'bg-gradient-to-r from-gray-500 to-slate-500 text-white'
     }
   }
 
+  const navigationItems = [
+    { href: '/dashboard', label: 'Dashboard', icon: BarChart3 },
+    { href: '/projects', label: 'Projects', icon: FolderOpen },
+    { href: '/analytics', label: 'Analytics', icon: Target },
+    { href: '/tasks', label: 'Tasks', icon: CheckSquare },
+    { href: '/about', label: 'About', icon: Info },
+  ]
+
+  const isActiveRoute = (href: string) => {
+    return pathname === href || (href !== '/' && pathname.startsWith(href))
+  }
+
   return (
-    <nav className="bg-white border-b border-gray-200 px-4 py-3">
-      <div className="container mx-auto flex items-center justify-between">
-        <Link href="/" className="text-lg sm:text-xl font-bold text-gray-900 truncate">
-          Project Manager
-        </Link>
-        
-        {/* Desktop Navigation */}
-        <div className="hidden lg:flex items-center space-x-6">
-          <Link 
-            href="/dashboard" 
-            className="text-gray-600 hover:text-gray-900 transition-colors"
-          >
-            Dashboard
-          </Link>
-          <Link 
-            href="/projects" 
-            className="text-gray-600 hover:text-gray-900 transition-colors"
-          >
-            Projects
-          </Link>
-          <Link 
-            href="/analytics" 
-            className="text-gray-600 hover:text-gray-900 transition-colors"
-          >
-            Analytics
-          </Link>
-          <Link 
-            href="/tasks" 
-            className="text-gray-600 hover:text-gray-900 transition-colors"
-          >
-            Tasks
-          </Link>
-          <Link 
-            href="/about" 
-            className="text-gray-600 hover:text-gray-900 transition-colors"
-          >
-            About
-          </Link>
-          
-          <div className="border-l border-gray-300 pl-6 flex items-center space-x-4">
-            {loading ? (
-              <div className="w-8 h-8 bg-gray-200 rounded-full animate-pulse"></div>
-            ) : user ? (
-              <div className="relative">
-                <button
-                  onClick={() => setShowUserMenu(!showUserMenu)}
-                  className="flex items-center space-x-3 text-gray-700 hover:text-gray-900 transition-colors"
-                >
-                  <div className="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center text-sm font-medium">
-                    {getUserInitials(user.name)}
-                  </div>
-                  <div className="text-left">
-                    <div className="text-sm font-medium">{user.name}</div>
-                    <div className="text-xs text-gray-500">{user.role}</div>
-                  </div>
-                </button>
-
-                {showUserMenu && (
-                  <div className="absolute right-0 mt-2 w-64 bg-white rounded-md shadow-lg border border-gray-200 z-50">
-                    <div className="p-4 border-b border-gray-100">
-                      <div className="flex items-center space-x-3">
-                        <div className="w-10 h-10 bg-blue-600 text-white rounded-full flex items-center justify-center text-sm font-medium">
-                          {getUserInitials(user.name)}
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium text-gray-900 truncate">
-                            {user.name}
-                          </p>
-                          <p className="text-sm text-gray-500 truncate">
-                            {user.email}
-                          </p>
-                          <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full mt-1 ${getRoleBadgeColor(user.role)}`}>
-                            {user.role}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                    
-                    <div className="py-2">
-                      <Link
-                        href="/auth/account"
-                        className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
-                        onClick={() => setShowUserMenu(false)}
-                      >
-                        <Settings className="h-4 w-4 mr-3" />
-                        Account Settings
-                      </Link>
-                      <button
-                        onClick={handleLogout}
-                        className="w-full flex items-center px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors"
-                      >
-                        <LogOut className="h-4 w-4 mr-3" />
-                        Sign Out
-                      </button>
-                    </div>
-                  </div>
-                )}
+    <>
+      {/* Modern Navigation Bar */}
+      <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-gray-200/50 shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16">
+            {/* Logo/Brand */}
+            <Link 
+              href="/" 
+              className="flex items-center space-x-3 group"
+            >
+              <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center group-hover:scale-105 transition-transform duration-200">
+                <span className="text-white font-bold text-sm">PM</span>
               </div>
-            ) : (
-              <>
-                <Link 
-                  href="/auth/login" 
-                  className="text-blue-600 hover:text-blue-800 transition-colors font-medium"
-                >
-                  Login
-                </Link>
-                <Link 
-                  href="/auth/register" 
-                  className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors"
-                >
-                  Sign Up
-                </Link>
-                <Link 
-                  href="/auth/account" 
-                  className="text-gray-600 hover:text-gray-900 transition-colors"
-                >
-                  Account
-                </Link>
-              </>
-            )}
-          </div>
-        </div>
+              <span className="text-xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent">
+                Project Manager
+              </span>
+            </Link>
+            
+            {/* Desktop Navigation */}
+            <div className="hidden lg:flex items-center space-x-1">
+              {navigationItems.map((item) => {
+                const Icon = item.icon
+                const isActive = isActiveRoute(item.href)
+                
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className={`relative flex items-center space-x-2 px-4 py-2 rounded-lg font-medium transition-all duration-200 group ${
+                      isActive
+                        ? 'bg-gradient-to-r from-blue-50 to-purple-50 text-blue-700 shadow-sm'
+                        : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                    }`}
+                  >
+                    <Icon className={`h-4 w-4 ${isActive ? 'text-blue-600' : 'text-gray-500 group-hover:text-gray-700'}`} />
+                    <span>{item.label}</span>
+                    {isActive && (
+                      <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-1 h-1 bg-blue-600 rounded-full"></div>
+                    )}
+                  </Link>
+                )
+              })}
+            </div>
 
-        {/* Mobile Navigation */}
-        <div className="lg:hidden flex items-center space-x-2">
-          {loading ? (
-            <div className="w-8 h-8 bg-gray-200 rounded-full animate-pulse"></div>
-          ) : user ? (
-            <div className="relative">
-              <button
-                onClick={() => setShowUserMenu(!showUserMenu)}
-                className="flex items-center space-x-2 text-gray-700 hover:text-gray-900 transition-colors"
-              >
-                <div className="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center text-sm font-medium">
-                  {getUserInitials(user.name)}
-                </div>
-                <span className="text-sm font-medium truncate max-w-20">{user.name.split(' ')[0]}</span>
-              </button>
-
-              {showUserMenu && (
-                <div className="absolute right-0 mt-2 w-72 bg-white rounded-md shadow-lg border border-gray-200 z-50">
-                  <div className="p-4 border-b border-gray-100">
-                    <div className="flex items-center space-x-3">
-                      <div className="w-10 h-10 bg-blue-600 text-white rounded-full flex items-center justify-center text-sm font-medium">
+            {/* User Section */}
+            <div className="flex items-center space-x-4">
+              {loading ? (
+                <div className="w-10 h-10 bg-gray-200 rounded-full animate-pulse"></div>
+              ) : user ? (
+                <div className="relative">
+                  <button
+                    onClick={() => setShowUserMenu(!showUserMenu)}
+                    className="flex items-center space-x-3 p-2 rounded-xl hover:bg-gray-50 transition-all duration-200 group"
+                  >
+                    <div className="relative">
+                      <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-full flex items-center justify-center text-sm font-semibold shadow-lg">
                         {getUserInitials(user.name)}
                       </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-gray-900 truncate">
-                          {user.name}
-                        </p>
-                        <p className="text-sm text-gray-500 truncate">
-                          {user.email}
-                        </p>
-                        <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full mt-1 ${getRoleBadgeColor(user.role)}`}>
-                          {user.role}
-                        </span>
+                      <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 border-2 border-white rounded-full"></div>
+                    </div>
+                    <div className="hidden sm:block text-left">
+                      <div className="text-sm font-semibold text-gray-900">{user.name}</div>
+                      <div className="text-xs text-gray-500">{user.role}</div>
+                    </div>
+                    <ChevronDown className={`h-4 w-4 text-gray-500 transition-transform duration-200 ${showUserMenu ? 'rotate-180' : ''}`} />
+                  </button>
+
+                  {/* Enhanced User Dropdown */}
+                  {showUserMenu && (
+                    <div className="absolute right-0 mt-2 w-80 bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-gray-200/50 z-50 overflow-hidden">
+                      {/* User Info Header */}
+                      <div className="p-6 bg-gradient-to-r from-blue-50 to-purple-50 border-b border-gray-100">
+                        <div className="flex items-center space-x-4">
+                          <div className="relative">
+                            <div className="w-14 h-14 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-full flex items-center justify-center text-lg font-bold shadow-lg">
+                              {getUserInitials(user.name)}
+                            </div>
+                            <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-green-500 border-3 border-white rounded-full"></div>
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-lg font-semibold text-gray-900 truncate">
+                              {user.name}
+                            </p>
+                            <p className="text-sm text-gray-600 truncate">
+                              {user.email}
+                            </p>
+                            <span className={`inline-flex px-3 py-1 text-xs font-semibold rounded-full mt-2 ${getRoleBadgeColor(user.role)}`}>
+                              {user.role}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      {/* Menu Items */}
+                      <div className="py-3">
+                        <Link
+                          href="/auth/account"
+                          className="flex items-center px-6 py-3 text-sm text-gray-700 hover:bg-gray-50 transition-colors group"
+                          onClick={() => setShowUserMenu(false)}
+                        >
+                          <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center mr-3 group-hover:bg-blue-100 transition-colors">
+                            <Settings className="h-5 w-5 text-gray-600 group-hover:text-blue-600" />
+                          </div>
+                          <div>
+                            <div className="font-medium">Account Settings</div>
+                            <div className="text-xs text-gray-500">Manage your profile</div>
+                          </div>
+                        </Link>
+                        <button
+                          onClick={handleLogout}
+                          className="w-full flex items-center px-6 py-3 text-sm text-red-600 hover:bg-red-50 transition-colors group"
+                        >
+                          <div className="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center mr-3 group-hover:bg-red-200 transition-colors">
+                            <LogOut className="h-5 w-5 text-red-600" />
+                          </div>
+                          <div>
+                            <div className="font-medium">Sign Out</div>
+                            <div className="text-xs text-red-500">End your session</div>
+                          </div>
+                        </button>
                       </div>
                     </div>
-                  </div>
-                  
-                  {/* Mobile Menu Links */}
-                  <div className="py-2">
-                    <Link
-                      href="/dashboard"
-                      className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
-                      onClick={() => setShowUserMenu(false)}
-                    >
-                      Dashboard
-                    </Link>
-                    <Link
-                      href="/projects"
-                      className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
-                      onClick={() => setShowUserMenu(false)}
-                    >
-                      Projects
-                    </Link>
-                    <Link
-                      href="/analytics"
-                      className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
-                      onClick={() => setShowUserMenu(false)}
-                    >
-                      Analytics
-                    </Link>
-                    <Link
-                      href="/tasks"
-                      className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
-                      onClick={() => setShowUserMenu(false)}
-                    >
-                      Tasks
-                    </Link>
-                    <Link
-                      href="/about"
-                      className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
-                      onClick={() => setShowUserMenu(false)}
-                    >
-                      About
-                    </Link>
-                    <div className="border-t border-gray-100 mt-2 pt-2">
-                      <Link
-                        href="/auth/account"
-                        className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
-                        onClick={() => setShowUserMenu(false)}
-                      >
-                        <Settings className="h-4 w-4 mr-3" />
-                        Account Settings
-                      </Link>
-                      <button
-                        onClick={handleLogout}
-                        className="w-full flex items-center px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors"
-                      >
-                        <LogOut className="h-4 w-4 mr-3" />
-                        Sign Out
-                      </button>
-                    </div>
-                  </div>
+                  )}
+                </div>
+              ) : (
+                <div className="flex items-center space-x-3">
+                  <Link 
+                    href="/auth/login" 
+                    className="text-gray-600 hover:text-gray-900 font-medium transition-colors"
+                  >
+                    Login
+                  </Link>
+                  <Link 
+                    href="/auth/register" 
+                    className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-4 py-2 rounded-lg font-medium transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
+                  >
+                    Sign Up
+                  </Link>
                 </div>
               )}
-            </div>
-          ) : (
-            <div className="flex items-center space-x-2">
-              <Link 
-                href="/auth/login" 
-                className="text-blue-600 hover:text-blue-800 transition-colors font-medium text-sm"
+
+              {/* Mobile Menu Button */}
+              <button
+                onClick={() => setShowMobileMenu(!showMobileMenu)}
+                className="lg:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors"
               >
-                Login
-              </Link>
-              <Link 
-                href="/auth/register" 
-                className="bg-blue-600 text-white px-3 py-1.5 rounded-md hover:bg-blue-700 transition-colors text-sm"
-              >
-                Sign Up
-              </Link>
+                {showMobileMenu ? (
+                  <X className="h-6 w-6 text-gray-600" />
+                ) : (
+                  <Menu className="h-6 w-6 text-gray-600" />
+                )}
+              </button>
             </div>
-          )}
-                </div>
-      </div>
+          </div>
+        </div>
+      </nav>
+
+      {/* Mobile Menu */}
+      {showMobileMenu && (
+        <div className="lg:hidden fixed inset-0 z-50 bg-black/20 backdrop-blur-sm">
+          <div className="absolute top-16 left-0 right-0 bg-white/95 backdrop-blur-xl border-b border-gray-200 shadow-xl">
+            <div className="max-w-7xl mx-auto px-4 py-6">
+              <div className="space-y-2">
+                {navigationItems.map((item) => {
+                  const Icon = item.icon
+                  const isActive = isActiveRoute(item.href)
+                  
+                  return (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      onClick={() => setShowMobileMenu(false)}
+                      className={`flex items-center space-x-3 px-4 py-3 rounded-xl transition-all duration-200 ${
+                        isActive
+                          ? 'bg-gradient-to-r from-blue-50 to-purple-50 text-blue-700'
+                          : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                      }`}
+                    >
+                      <Icon className={`h-5 w-5 ${isActive ? 'text-blue-600' : 'text-gray-500'}`} />
+                      <span className="font-medium">{item.label}</span>
+                    </Link>
+                  )
+                })}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
       
-      {/* Overlay to close menu when clicking outside */}
-      {showUserMenu && (
+      {/* Overlay to close menus when clicking outside */}
+      {(showUserMenu || showMobileMenu) && (
         <div 
           className="fixed inset-0 z-40" 
-          onClick={() => setShowUserMenu(false)}
+          onClick={() => {
+            setShowUserMenu(false)
+            setShowMobileMenu(false)
+          }}
         ></div>
       )}
-    </nav>
+    </>
   )
 } 
