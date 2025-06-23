@@ -25,7 +25,12 @@ model User {
   assignedTasks   Task[]
   createdTasks    Task[]      @relation("TaskCreator")
   riskAssessments Risk[]
+  ownedRisks      Risk[]      @relation("RiskOwner")
   workItems       WorkItem[]
+  taskComments    TaskComment[]
+  taskAttachments TaskAttachment[]
+  changeRequests  ChangeRequest[]
+  activityLogs    ActivityLog[]
   
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -48,6 +53,10 @@ model Project {
   country           String? // Country
   pic               String? // Person in Charge
   
+  // PRD Additional Fields
+  jiraUrl           String? // Jira Ticket URL
+  wikiUrl           String? // Wiki Documentation URL
+  
   // Timeline
   startDate DateTime?
   endDate   DateTime? // ETA
@@ -57,10 +66,12 @@ model Project {
   manager   User?   @relation(fields: [managerId], references: [id])
   
   // Relations
-  tasks     Task[]
-  risks     Risk[]
-  workItems WorkItem[]
-  metrics   ProjectMetric[]
+  tasks         Task[]
+  risks         Risk[]
+  workItems     WorkItem[]
+  metrics       ProjectMetric[]
+  changeRequests ChangeRequest[]
+  activityLogs  ActivityLog[]
   
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -73,6 +84,9 @@ model Task {
   status      TaskStatus @default(TODO)
   priority    Priority   @default(MEDIUM)
   
+  // PRD Additional Fields
+  milestone   String?
+  
   // Impact/Effort matrix
   impact Int @default(1) // 1-5 scale
   effort Int @default(1) // 1-5 scale
@@ -81,6 +95,7 @@ model Task {
   startDate DateTime?
   endDate   DateTime?
   dueDate   DateTime?
+  eta       DateTime? // Estimated Time of Arrival
   
   // Kanban position
   columnId String?
@@ -105,8 +120,94 @@ model Task {
   parent   Task?   @relation("TaskHierarchy", fields: [parentId], references: [id])
   children Task[]  @relation("TaskHierarchy")
   
+  // New relations for PRD
+  comments     TaskComment[]
+  attachments  TaskAttachment[]
+  activityLogs ActivityLog[]
+  changeRequestTasks ChangeRequestTask[]
+  
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model TaskComment {
+  id        String @id @default(cuid())
+  content   String
+  taskId    String
+  task      Task   @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  authorId  String
+  author    User   @relation(fields: [authorId], references: [id])
+  parentId  String? // For threaded comments
+  parent    TaskComment? @relation("CommentReplies", fields: [parentId], references: [id])
+  replies   TaskComment[] @relation("CommentReplies")
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model TaskAttachment {
+  id         String @id @default(cuid())
+  filename   String
+  fileUrl    String
+  fileSize   Int?
+  mimeType   String?
+  taskId     String
+  task       Task   @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  uploadedBy String
+  uploader   User   @relation(fields: [uploadedBy], references: [id])
+  
+  createdAt DateTime @default(now())
+}
+
+model ChangeRequest {
+  id          String @id @default(cuid())
+  title       String
+  description String
+  impact      String?
+  status      ChangeRequestStatus @default(PENDING)
+  date        DateTime @default(now())
+  
+  projectId   String
+  project     Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  
+  requestedBy String
+  requester   User    @relation(fields: [requestedBy], references: [id])
+  
+  // Linked tasks
+  linkedTasks ChangeRequestTask[]
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model ChangeRequestTask {
+  id              String        @id @default(cuid())
+  changeRequestId String
+  changeRequest   ChangeRequest @relation(fields: [changeRequestId], references: [id], onDelete: Cascade)
+  taskId          String
+  task            Task          @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  
+  @@unique([changeRequestId, taskId])
+}
+
+model ActivityLog {
+  id        String @id @default(cuid())
+  action    String // e.g., "Status changed", "Due date updated", "PIC assigned"
+  oldValue  String?
+  newValue  String?
+  field     String? // e.g., "status", "dueDate", "assigneeId"
+  
+  // Relations
+  projectId String?
+  project   Project? @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  
+  taskId    String?
+  task      Task?    @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  
+  createdAt DateTime @default(now())
 }
 
 model WorkItem {
@@ -149,8 +250,10 @@ model Risk {
   description String
   category    RiskCategory @default(TECHNICAL)
   
-  // Risk assessment
-  probability Int @default(1) // 1-5 scale
+  // Risk assessment - Updated to match PRD
+  severity    RiskSeverity @default(LOW) // Low, Medium, High, Critical
+  likelihood  RiskLikelihood @default(LOW) // Low, Medium, High
+  probability Int @default(1) // 1-5 scale (keeping for backward compatibility)
   impact      Int @default(1) // 1-5 scale
   riskScore   Int @default(1) // calculated: probability * impact
   
@@ -163,6 +266,10 @@ model Risk {
   
   assessorId String?
   assessor   User?   @relation(fields: [assessorId], references: [id])
+  
+  // PRD: Owner field
+  ownerId    String?
+  owner      User?   @relation("RiskOwner", fields: [ownerId], references: [id])
   
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -200,7 +307,6 @@ enum ProjectStatus {
 enum TaskStatus {
   TODO
   IN_PROGRESS
-  UAT
   DONE
   BLOCKED
 }
@@ -234,6 +340,25 @@ enum RiskStatus {
   ASSESSED
   MITIGATED
   CLOSED
+}
+
+enum RiskSeverity {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum RiskLikelihood {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+enum ChangeRequestStatus {
+  PENDING
+  APPROVED
+  REJECTED
 }
 
 enum MetricCategory {

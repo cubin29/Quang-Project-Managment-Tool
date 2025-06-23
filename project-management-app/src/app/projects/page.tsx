@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { Project } from '@/types'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -9,6 +10,7 @@ import { Plus, Eye, Edit, Trash2, DollarSign, Users, Calendar, TrendingUp, MapPi
 import { formatCurrency, formatCurrencyCompact, formatDate, getStatusColor, getPriorityColor } from '@/lib/utils'
 
 export default function ProjectsPage() {
+  const router = useRouter()
   const [projects, setProjects] = useState<Project[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -56,6 +58,15 @@ export default function ProjectsPage() {
     }
   }
 
+  // Navigation functions
+  const navigateToProject = (projectId: string) => {
+    router.push(`/projects/${projectId}`)
+  }
+
+  const navigateToEditProject = (projectId: string) => {
+    router.push(`/projects/manage?action=edit&id=${projectId}`)
+  }
+
   const getBusinessImpactColor = (impact: number) => {
     if (impact >= 8) return 'bg-red-100 text-red-800'
     if (impact >= 6) return 'bg-orange-100 text-orange-800'
@@ -95,9 +106,8 @@ export default function ProjectsPage() {
           <p className="text-gray-600 mt-1 sm:mt-2">Manage your project portfolio</p>
         </div>
         <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
-          {/* Enhanced Manage Projects Button - Using Design System */}
           <Button 
-            onClick={() => window.location.href = '/projects/manage'}
+            onClick={() => router.push('/projects/manage')}
             className="bg-white border-2 border-slate-300 hover:border-blue-400 text-slate-700 hover:text-blue-700 font-semibold px-6 py-3 rounded-xl shadow-sm hover:shadow-md transition-all duration-200 transform hover:scale-105 focus:ring-4 focus:ring-blue-100 focus:outline-none hover:bg-blue-50 relative flex items-center justify-center gap-2 text-sm sm:text-base"
           >
             <div className="flex items-center gap-2">
@@ -108,14 +118,11 @@ export default function ProjectsPage() {
               <span className="hidden sm:inline">Manage Projects</span>
               <span className="sm:hidden">Manage</span>
             </div>
-            
-            {/* Subtle shine effect */}
             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-blue-50 to-transparent opacity-0 group-hover:opacity-30 transform -skew-x-12 transition-opacity duration-500 rounded-xl"></div>
           </Button>
           
-          {/* Enhanced New Project Button - Using Design System */}
           <Button 
-            onClick={() => window.location.href = '/projects/manage?action=create'}
+            onClick={() => router.push('/projects/manage?action=create')}
             className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 border-0 focus:ring-4 focus:ring-blue-200 focus:outline-none relative flex items-center justify-center gap-2 text-sm sm:text-base"
           >
             <div className="flex items-center gap-2">
@@ -126,8 +133,6 @@ export default function ProjectsPage() {
               <span className="hidden sm:inline">Create New Project</span>
               <span className="sm:hidden">New Project</span>
             </div>
-            
-            {/* Shine effect */}
             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-0 hover:opacity-20 transform -skew-x-12 transition-opacity duration-500 rounded-xl"></div>
           </Button>
         </div>
@@ -211,27 +216,51 @@ export default function ProjectsPage() {
       {/* Projects Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
         {projects.map((project) => (
-          <Card key={project.id} className="hover:shadow-lg transition-shadow">
+          <Card key={project.id} className="hover:shadow-lg transition-shadow cursor-pointer">
             <CardHeader className="pb-3 sm:pb-4">
               <div className="flex justify-between items-start gap-3">
-                <div className="min-w-0 flex-1">
-                  <CardTitle className="text-base sm:text-lg truncate">{project.name}</CardTitle>
+                <div className="min-w-0 flex-1" onClick={() => navigateToProject(project.id)}>
+                  <CardTitle className="text-base sm:text-lg truncate hover:text-blue-600 transition-colors">
+                    {project.name}
+                  </CardTitle>
                   <CardDescription className="mt-1 sm:mt-2 line-clamp-2">
                     {project.description}
                   </CardDescription>
                 </div>
                 <div className="flex gap-1 flex-shrink-0">
-                  <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    className="h-8 w-8 p-0 hover:bg-blue-100"
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      navigateToProject(project.id)
+                    }}
+                    title="View Project Details"
+                  >
                     <Eye className="h-4 w-4" />
                   </Button>
-                  <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    className="h-8 w-8 p-0 hover:bg-green-100"
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      navigateToEditProject(project.id)
+                    }}
+                    title="Edit Project"
+                  >
                     <Edit className="h-4 w-4" />
                   </Button>
                   <Button 
                     variant="ghost" 
                     size="sm"
-                    className="h-8 w-8 p-0"
-                    onClick={() => deleteProject(project.id)}
+                    className="h-8 w-8 p-0 hover:bg-red-100"
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      deleteProject(project.id)
+                    }}
+                    title="Delete Project"
                   >
                     <Trash2 className="h-4 w-4" />
                   </Button>
@@ -239,7 +268,7 @@ export default function ProjectsPage() {
               </div>
             </CardHeader>
             
-            <CardContent className="pt-0">
+            <CardContent className="pt-0" onClick={() => navigateToProject(project.id)}>
               {/* Status and Priority */}
               <div className="flex flex-wrap gap-2 mb-3 sm:mb-4">
                 <Badge className={getStatusColor(project.status)}>
@@ -349,7 +378,10 @@ export default function ProjectsPage() {
           </div>
           <h3 className="text-lg font-medium text-gray-900 mb-2">No projects found</h3>
           <p className="text-gray-600 mb-4">Get started by creating your first project</p>
-          <Button className="flex items-center gap-2">
+          <Button 
+            className="flex items-center gap-2"
+            onClick={() => router.push('/projects/manage?action=create')}
+          >
             <Plus className="h-4 w-4" />
             Create Project
           </Button>

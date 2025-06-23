@@ -11,7 +11,6 @@ export type ProjectStatus =
 export type TaskStatus = 
   | 'TODO' 
   | 'IN_PROGRESS' 
-  | 'UAT'
   | 'DONE' 
   | 'BLOCKED'
 
@@ -28,6 +27,12 @@ export type RiskCategory =
   | 'EXTERNAL'
 
 export type RiskStatus = 'IDENTIFIED' | 'ASSESSED' | 'MITIGATED' | 'CLOSED'
+
+export type RiskSeverity = 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL'
+
+export type RiskLikelihood = 'LOW' | 'MEDIUM' | 'HIGH'
+
+export type ChangeRequestStatus = 'PENDING' | 'APPROVED' | 'REJECTED'
 
 export type MetricCategory = 
   | 'FINANCIAL' 
@@ -68,10 +73,21 @@ export interface Project {
   country?: string // Country
   pic?: string // Person in Charge
   
+  // PRD Additional Fields
+  jiraUrl?: string // Jira Ticket URL
+  wikiUrl?: string // Wiki Documentation URL
+  
   startDate?: Date
   endDate?: Date // ETA
   managerId?: string
   manager?: User
+  
+  // Relations
+  tasks?: Task[]
+  risks?: Risk[]
+  changeRequests?: ChangeRequest[]
+  activityLogs?: ActivityLog[]
+  
   createdAt: Date
   updatedAt: Date
 }
@@ -82,11 +98,13 @@ export interface Task {
   description?: string
   status: TaskStatus
   priority: Priority
+  milestone?: string // PRD field
   impact: number
   effort: number
   startDate?: Date
   endDate?: Date
   dueDate?: Date
+  eta?: Date // PRD field
   columnId?: string
   position: number
   projectId: string
@@ -97,8 +115,84 @@ export interface Task {
   parentId?: string
   parent?: Task
   children?: Task[]
+  
+  // Dependencies
+  dependencies?: Task[]
+  dependents?: Task[]
+  
+  // PRD Relations
+  comments?: TaskComment[]
+  attachments?: TaskAttachment[]
+  activityLogs?: ActivityLog[]
+  
   createdAt: Date
   updatedAt: Date
+}
+
+export interface TaskComment {
+  id: string
+  content: string
+  taskId: string
+  task?: Task
+  authorId: string
+  author: User
+  parentId?: string
+  parent?: TaskComment
+  replies?: TaskComment[]
+  createdAt: Date
+  updatedAt: Date
+}
+
+export interface TaskAttachment {
+  id: string
+  filename: string
+  fileUrl: string
+  fileSize?: number
+  mimeType?: string
+  taskId: string
+  task?: Task
+  uploadedBy: string
+  uploader: User
+  createdAt: Date
+}
+
+export interface ChangeRequest {
+  id: string
+  title: string
+  description: string
+  impact?: string
+  status: ChangeRequestStatus
+  date: Date
+  projectId: string
+  project?: Project
+  requestedBy: string
+  requester: User
+  linkedTasks?: ChangeRequestTask[]
+  createdAt: Date
+  updatedAt: Date
+}
+
+export interface ChangeRequestTask {
+  id: string
+  changeRequestId: string
+  changeRequest?: ChangeRequest
+  taskId: string
+  task?: Task
+}
+
+export interface ActivityLog {
+  id: string
+  action: string
+  oldValue?: string
+  newValue?: string
+  field?: string
+  projectId?: string
+  project?: Project
+  taskId?: string
+  task?: Task
+  userId: string
+  user: User
+  createdAt: Date
 }
 
 export interface WorkItem {
@@ -127,14 +221,26 @@ export interface Risk {
   title: string
   description: string
   category: RiskCategory
+  
+  // PRD Risk Assessment Fields
+  severity: RiskSeverity
+  likelihood: RiskLikelihood
+  
+  // Legacy fields (keeping for compatibility)
   probability: number
   impact: number
   riskScore: number
+  
   status: RiskStatus
   mitigationPlan?: string
   projectId: string
   assessorId?: string
   assessor?: User
+  
+  // PRD Owner field
+  ownerId?: string
+  owner?: User
+  
   createdAt: Date
   updatedAt: Date
 }
@@ -220,7 +326,6 @@ export interface DashboardMetrics {
   overdueTasksCount: number
 }
 
-// Form Types
 export interface CreateProjectForm {
   name: string
   description?: string
@@ -233,6 +338,8 @@ export interface CreateProjectForm {
   team?: string
   country?: string
   pic?: string
+  jiraUrl?: string
+  wikiUrl?: string
   startDate?: Date
   endDate?: Date
   managerId?: string
@@ -241,25 +348,59 @@ export interface CreateProjectForm {
 export interface CreateTaskForm {
   title: string
   description?: string
+  milestone?: string
   priority: Priority
   impact: number
   effort: number
+  startDate?: Date
+  eta?: Date
   dueDate?: Date
   assigneeId?: string
   parentId?: string
+  dependencyIds?: string[]
 }
 
 export interface CreateRiskForm {
   title: string
   description: string
   category: RiskCategory
-  probability: number
-  impact: number
+  severity: RiskSeverity
+  likelihood: RiskLikelihood
   mitigationPlan?: string
-  assessorId?: string
+  ownerId?: string
 }
 
-// API Response Types
+export interface CreateChangeRequestForm {
+  title: string
+  description: string
+  impact?: string
+  linkedTaskIds?: string[]
+}
+
+export interface CreateCommentForm {
+  content: string
+  parentId?: string
+}
+
+// View Types for Project Details Page
+export type TaskViewMode = 'kanban' | 'table' | 'gantt'
+
+export interface TaskFilters {
+  status?: TaskStatus[]
+  priority?: Priority[]
+  assigneeId?: string[]
+  milestone?: string[]
+  overdue?: boolean
+}
+
+export interface ProjectHealthStatus {
+  status: 'green' | 'yellow' | 'red'
+  overdueTasksPercentage: number
+  openHighRisksCount: number
+  totalTasks: number
+  completedTasks: number
+}
+
 export interface ApiResponse<T> {
   success: boolean
   data?: T

@@ -11,7 +11,9 @@
     "db:push": "prisma db push",
     "db:seed": "node prisma/seed.js",
     "db:studio": "prisma studio",
-    "db:reset": "prisma db push --force-reset && npm run db:seed"
+    "db:reset": "prisma db push --force-reset",
+    "db:reset-and-seed": "npm run db:reset && npm run db:seed",
+    "db:status": "prisma migrate status"
   },
   "prisma": {
     "seed": "node prisma/seed.js"

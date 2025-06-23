@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, Suspense } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -24,7 +24,7 @@ interface Project {
   endDate?: string
 }
 
-export default function ProjectManagePage() {
+function ProjectManagePageContent() {
   const searchParams = useSearchParams()
   const router = useRouter()
   const [projects, setProjects] = useState<Project[]>([])
@@ -1088,5 +1088,17 @@ export default function ProjectManagePage() {
         </div>
       )}
     </div>
+  )
+}
+
+export default function ProjectManagePage() {
+  return (
+    <Suspense fallback={
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      </div>
+    }>
+      <ProjectManagePageContent />
+    </Suspense>
   )
 } 

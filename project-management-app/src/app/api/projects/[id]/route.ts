@@ -1,30 +1,107 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getProjectById, updateProject, deleteProject } from '@/lib/projects'
+import { PrismaClient } from '@prisma/client'
+
+const prisma = new PrismaClient()
 
 // GET /api/projects/[id] - Get a single project by ID
 export async function GET(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: { id: string } }
 ) {
   try {
-    const { id } = await params
-    const result = await getProjectById(id)
+    const { searchParams } = new URL(request.url)
+    const include = searchParams.get('include')?.split(',') || []
 
-    if (!result.success) {
+    const includeOptions: any = {
+      manager: true,
+    }
+
+    // Add optional includes based on query parameter
+    if (include.includes('tasks')) {
+      includeOptions.tasks = {
+        include: {
+          assignee: true,
+          createdBy: true,
+          dependencies: true,
+          dependents: true,
+          comments: {
+            include: {
+              author: true,
+              replies: {
+                include: {
+                  author: true
+                }
+              }
+            }
+          },
+          attachments: {
+            include: {
+              uploader: true
+            }
+          },
+          activityLogs: {
+            include: {
+              user: true
+            }
+          }
+        }
+      }
+    }
+
+    if (include.includes('risks')) {
+      includeOptions.risks = {
+        include: {
+          assessor: true,
+          owner: true
+        }
+      }
+    }
+
+    if (include.includes('changeRequests')) {
+      includeOptions.changeRequests = {
+        include: {
+          requester: true,
+          linkedTasks: {
+            include: {
+              task: true
+            }
+          }
+        }
+      }
+    }
+
+    if (include.includes('activityLogs')) {
+      includeOptions.activityLogs = {
+        include: {
+          user: true,
+          task: true
+        },
+        orderBy: {
+          createdAt: 'desc'
+        }
+      }
+    }
+
+    const project = await prisma.project.findUnique({
+      where: { id: params.id },
+      include: includeOptions
+    })
+
+    if (!project) {
       return NextResponse.json(
-        { error: result.error },
-        { status: result.error === 'Project not found' ? 404 : 500 }
+        { success: false, error: 'Project not found' },
+        { status: 404 }
       )
     }
 
     return NextResponse.json({
       success: true,
-      data: result.data,
+      data: project
     })
   } catch (error) {
-    console.error('Error in GET /api/projects/[id]:', error)
+    console.error('Error fetching project:', error)
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { success: false, error: 'Failed to fetch project' },
       { status: 500 }
     )
   }
@@ -33,42 +110,39 @@ export async function GET(
 // PUT /api/projects/[id] - Update a project
 export async function PUT(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: { id: string } }
 ) {
   try {
-    const { id } = await params
     const body = await request.json()
     
-    // Parse dates if provided
-    const updateData = {
-      ...body,
-      startDate: body.startDate ? new Date(body.startDate) : undefined,
-      endDate: body.endDate ? new Date(body.endDate) : undefined,
-    }
-
-    // Remove undefined values
-    const cleanData = Object.fromEntries(
-      Object.entries(updateData).filter(([_, value]) => value !== undefined)
-    )
-
-    const result = await updateProject(id, cleanData)
-
-    if (!result.success) {
-      return NextResponse.json(
-        { error: result.error },
-        { status: 500 }
-      )
-    }
+    const updatedProject = await prisma.project.update({
+      where: { id: params.id },
+      data: body,
+      include: {
+        manager: true,
+        tasks: {
+          include: {
+            assignee: true,
+            createdBy: true
+          }
+        },
+        risks: {
+          include: {
+            assessor: true,
+            owner: true
+          }
+        }
+      }
+    })
 
     return NextResponse.json({
       success: true,
-      data: result.data,
-      message: 'Project updated successfully',
+      data: updatedProject
     })
   } catch (error) {
-    console.error('Error in PUT /api/projects/[id]:', error)
+    console.error('Error updating project:', error)
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { success: false, error: 'Failed to update project' },
       { status: 500 }
     )
   }
@@ -77,27 +151,21 @@ export async function PUT(
 // DELETE /api/projects/[id] - Delete a project
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: { id: string } }
 ) {
   try {
-    const { id } = await params
-    const result = await deleteProject(id)
-
-    if (!result.success) {
-      return NextResponse.json(
-        { error: result.error },
-        { status: 500 }
-      )
-    }
+    await prisma.project.delete({
+      where: { id: params.id }
+    })
 
     return NextResponse.json({
       success: true,
-      message: result.message,
+      message: 'Project deleted successfully'
     })
   } catch (error) {
-    console.error('Error in DELETE /api/projects/[id]:', error)
+    console.error('Error deleting project:', error)
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { success: false, error: 'Failed to delete project' },
       { status: 500 }
     )
   }
