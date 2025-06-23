@@ -521,8 +521,14 @@ export default function DashboardPage() {
     }
     
     // Calculate base position
+    // For X-axis (effort): 1-10 scale maps to 10%-90%
     const baseX = 10 + ((effort - 1) / 9) * 80 // 10% to 90%
-    const baseY = 10 + ((10 - impact) / 9) * 80 // 10% to 90%
+    // For Y-axis (impact): Map 1-10 scale to 90%-10% with value 5 centered at 50%
+    // Linear mapping: y = 100 - (impact * 8) + 10 = 110 - (impact * 8)
+    // This maps: 1->102%, 5->70%, 10->30% - not right
+    // Correct formula: 90 - ((impact-1) * 80/9) = standard mapping
+    // To center 5 at 50%: 90 - ((5-1) * 80/9) = 54.44%, so offset by -4.44%
+    const baseY = 90 - ((impact - 1) * 80 / 9) - 4.44
     
     // Check if this position conflicts with existing positions
     let finalX = baseX
@@ -575,7 +581,7 @@ export default function DashboardPage() {
   // Check if project name would overlap with quadrant labels and adjust position
   const getProjectNamePosition = (impact: number, effort: number, projectName: string) => {
     const x = ((effort - 1) / 9) * 100
-    const y = ((10 - impact) / 9) * 100
+    const y = 90 - ((impact - 1) * 80 / 9) - 4.44 // Match the matrix positioning
     
     // Define very precise quadrant label zones based on actual label positions
     const majorProjectsZone = x > 75 && y < 15 // Very specific zone for Major Projects label
@@ -619,7 +625,7 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-4 sm:pb-8">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6 sm:mb-8">
           <div>
@@ -1021,24 +1027,24 @@ export default function DashboardPage() {
             <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
               {/* Matrix Visualization - Left Side */}
               <div className="lg:col-span-3">
-                <div className="relative h-[500px] bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg border-2 border-gray-200">
+                <div className="relative h-[500px] bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg border-2 border-gray-200 mt-8 mb-8">
                   {/* Matrix Grid Lines */}
                   <div className="absolute inset-0">
                     <div className="absolute left-1/2 top-0 bottom-0 w-px bg-gray-300"></div>
                     <div className="absolute top-1/2 left-0 right-0 h-px bg-gray-300"></div>
                   </div>
 
-                  {/* Quadrant Labels */}
-                  <div className="absolute top-2 left-2 text-xs font-semibold text-emerald-700 bg-emerald-100 px-2 py-1 rounded border border-emerald-200">
+                  {/* Quadrant Labels - Outside Matrix */}
+                  <div className="absolute -top-6 left-1/4 transform -translate-x-1/2 text-xs font-semibold text-emerald-700 bg-emerald-100 px-2 py-1 rounded border border-emerald-200">
                     Quick Wins
                   </div>
-                  <div className="absolute top-2 right-2 text-xs font-semibold text-blue-700 bg-blue-100 px-2 py-1 rounded border border-blue-200">
+                  <div className="absolute -top-6 right-1/4 transform translate-x-1/2 text-xs font-semibold text-blue-700 bg-blue-100 px-2 py-1 rounded border border-blue-200">
                     Major Projects
                   </div>
-                  <div className="absolute bottom-2 left-2 text-xs font-semibold text-amber-700 bg-amber-100 px-2 py-1 rounded border border-amber-200">
+                  <div className="absolute -bottom-6 left-1/4 transform -translate-x-1/2 text-xs font-semibold text-amber-700 bg-amber-100 px-2 py-1 rounded border border-amber-200">
                     Fill-ins
                   </div>
-                  <div className="absolute bottom-2 right-2 text-xs font-semibold text-red-700 bg-red-100 px-2 py-1 rounded border border-red-200">
+                  <div className="absolute -bottom-6 right-1/4 transform translate-x-1/2 text-xs font-semibold text-red-700 bg-red-100 px-2 py-1 rounded border border-red-200">
                     Thankless Tasks
                   </div>
 
@@ -1138,7 +1144,7 @@ export default function DashboardPage() {
 
               {/* Project List - Right Side with Pagination */}
               <div className="lg:col-span-1">
-                <div className="bg-white border rounded-lg h-[500px] flex flex-col">
+                <div className="bg-white border rounded-lg h-[564px] flex flex-col mt-8 mb-8">
                   {/* Projects List with Fixed Height */}
                   <div className="flex-1 p-3 pb-12 overflow-hidden">
                     {(() => {
